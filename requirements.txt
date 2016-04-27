@@ -1,0 +1,9 @@
+IMDbPY
+matplotlib
+networkx
+numpy
+pymongo
+python-dateutil
+scipy
+pandas
+sklearn

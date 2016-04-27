@@ -1,0 +1,14 @@
+CODE ENERGY FAIR LICENSE 1.0
+© 2016 Code Energy LLC <http://code.energy>
+
+Usage of the works is permitted provided the following conditions are met:
+
+- This instrument is retained with the works, such that any entity that uses the works is aware of this instrument.
+
+- Redistribution of the works must be accompanied by information on how to obtain the complete source code for the distributed version of the works and any accompanying software that uses the works. The complete source code must either be included in the distribution or made available for no more than the cost of distribution, and must be redistributable under similar conditions. Complete source code means the source code for all modules the software contains, excluding files that are core components of the operating system on which the software runs.
+
+- Entities remotely interacting with software running on a server that uses the works must be provided with a link to this instrument. Entities must also receive information on how to access the complete source code of all software on the server that uses the works. The source code must be made available for no more than the cost of distribution, and must be redistributable under similar conditions.
+
+- The name of Code Energy LLC, its trademarks, and the names of any contributors may not be used to endorse or promote products derived from the works without permission.
+
+DISCLAIMER: THE WORKS ARE WITHOUT WARRANTY.

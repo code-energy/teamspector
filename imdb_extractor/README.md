@@ -4,9 +4,14 @@ with all data required for the experiments. Below are instructions to get the
 IMDb database from its source and convert it to the MongoDB collection:
 
 
-0. Install packages from requirements.txt in your current Python environment.
+0. The IMDBpy python package only works on Python2. We should create a python2
+   virtualenv and install py2 dependencies there:
 
-1. Get the .gz files from IMDb. It should download about 1.5 GB of data.
+    $ virtualenv --python=/usr/bin/python2.7 virtualenv
+    $ source virtualenv/bin/activate
+    $ pip install -r imdb-extraction-reqs.txt
+
+1. Download the .gz files from IMDb. It should be ~1.5 GB of data.
 
     $ mkdir temp.gz && cd temp.gz
     $ wget -r --accept="*.gz" --no-directories --no-host-directories \

@@ -1,0 +1,3 @@
+IMDbPY
+pymongo
+python-dateutil

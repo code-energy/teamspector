@@ -40,12 +40,8 @@ IMDb database from its source and convert it to the MongoDB collection:
     $ mongo imdb --eval "db.movies.ensureIndex({release:1, _id:1})"
     $ mongo imdb --eval "db.movies.ensureIndex({'team.full':1})"
 
-6. Normalize IMDBs ratings:
+6. Apply all transformations:
 
-    $ python normalize_ratings.py
-
-Now we still need to normalize gross.
-
-    #TODO
+    $ for f in transformations/*.py; do python "$f"; done
 
 <!-- vim: set fdm=marker textwidth=79 colorcolumn=80: -->

@@ -22,16 +22,6 @@ ia = IMDb('sql', uri='sqlite://'+path)
 db = MongoClient().imdb
 
 
-def movie_is_valid(movie):
-    if not all(x in m.keys() for x in ['rating', 'votes']):
-        return False
-
-    if len(movie_full_team(get_movie_team(movie))) < 2:
-        return False
-
-    return True
-
-
 def get_movie_runtime(m):
     if 'runtimes' in m.keys():
         runtime = m['runtime'][0]

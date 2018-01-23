@@ -11,11 +11,11 @@ social data. It was used in the following research:
 # Directions for Improvement
 
 ## Bugs to fix
-- Financial values are sometimes extracted incorrectly. Currently the top value
-  at the front of the list is extracted, and this might lead to
-  inconsistencies. Financial data should be evaluated in order to determine the
-  best way to use them experimentally. Values should match these:
-  http://www.boxofficemojo.com/alltime/adjusted.htm
+- The IMDB dataset has upgraded its database format since this project was
+  created. A lot of data that was present in the earlier version was removed.
+  Some of the removed data was unreliable (e.g., financial information), so
+  that wasn't so bad. The data extraction routine needs to be converted to work
+  with the new dataset format.
 
 ## Data visualization and graphs
 - Perform network renderings with Gephi.
@@ -34,7 +34,6 @@ social data. It was used in the following research:
   members as a new ego or team metric).
 
 ## Methodology
-- Better method for historical inflation correction and currency exchange.
 - Improve the IMDB data extracting script.
 - Map everything that might change between experiments
     - Create a JSON structure with that, to describe a different experiment.
@@ -61,7 +60,7 @@ social data. It was used in the following research:
     - Small size military units
     - Book authors
 
-## Research Hipothesys
+## Research Hypothesis
 - Study the maturation time for nodes to become productive. Detect with nodes
   aren't maturating on time, predict whether they will maturate at all.
 - Study whether teams with more influent nodes produce better results.

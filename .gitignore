@@ -1,5 +1,7 @@
 *.gz
 *.tar.bz2
+*.tsv.gz
+*.tsv
 *.sqlite
 *.pyc
 *.png

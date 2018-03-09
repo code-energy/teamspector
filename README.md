@@ -10,6 +10,11 @@ social data. It was used in the following research:
 
 # Directions for Improvement
 
+## Normalizing number of votes
+- Normalize votes in a zero-one scale, according to other movies produced in
+  the same year. This could reduce the problem that older movies have had more
+  time to accumulate votes.
+
 ## Bugs to fix
 - The IMDB dataset has upgraded its database format since this project was
   created. A lot of data that was present in the earlier version was removed.

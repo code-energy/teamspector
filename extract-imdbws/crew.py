@@ -14,7 +14,7 @@ path = root_path + "/datasets.imdbws.com/title.crew.tsv"
 counter = 0
 
 for row in csv.DictReader(open(path), delimiter='\t'):
-    if db.movies.find_one({'_id': row['tconst']}):
+    if db.titles.find_one({'_id': row['tconst']}):
 
         if row['directors'] == "\\N":
             row['directors'] = None
@@ -26,10 +26,10 @@ for row in csv.DictReader(open(path), delimiter='\t'):
         else:
             row['writers'] = row['writers'].split(',')
 
-        db.movies.update({'_id': row['tconst']}, {'$set':
+        db.titles.update({'_id': row['tconst']}, {'$set':
                          {'directors': row['directors'],
                           'writers': row['writers']}})
 
         counter += 1
         if counter % 10000 == 0:
-            print ("{} movies updated.".format(counter))
+            print ("{} titles updated.".format(counter))

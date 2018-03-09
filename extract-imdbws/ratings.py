@@ -15,16 +15,11 @@ path = root_path + "/datasets.imdbws.com/title.ratings.tsv"
 counter = 0
 
 for row in csv.DictReader(open(path), delimiter='\t'):
-    if db.movies.find_one({'_id': row['tconst']}):
-        db.movies.update({'_id': row['tconst']}, {'$set':
+    if db.titles.find_one({'_id': row['tconst']}):
+        db.titles.update({'_id': row['tconst']}, {'$set':
                          {'averageRating': Decimal128(row['averageRating']),
                           'numVotes': int(row['numVotes'])}})
 
         counter += 1
         if counter % 10000 == 0:
-            print ("{} movies updated.".format(counter))
-
-
-result = db.movies.delete_many({'numVotes': {'$exists': False}})
-if result.deleted_count:
-    print ("Removed {} movies without ratings.".format(result.deleted_count))
+            print ("{} titles updated.".format(counter))

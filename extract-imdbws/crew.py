@@ -13,7 +13,7 @@ path = root_path + "/datasets.imdbws.com/title.crew.tsv"
 
 counter = 0
 
-for row in csv.DictReader(open(path), delimiter='\t'):
+for row in csv.DictReader(open(path), delimiter='\t', quoting=csv.QUOTE_NONE):
     if db.titles.find_one({'_id': row['tconst']}):
 
         if row['directors'] == "\\N":

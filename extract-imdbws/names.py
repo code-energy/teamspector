@@ -1,11 +1,5 @@
 # Converts TSV data from IMDB for crew into a MongoDB collection.
 
-#import operator
-#from functools import reduce
-#from datetime import datetime
-
-#from dateutil import parser
-
 import os
 import csv
 
@@ -18,7 +12,7 @@ path = root_path + "/datasets.imdbws.com/name.basics.tsv"
 
 counter = 0
 
-for row in csv.DictReader(open(path), delimiter='\t'):
+for row in csv.DictReader(open(path), delimiter='\t', quoting=csv.QUOTE_NONE):
     c = {}
     for k, v in row.items():
         if v == "\\N":

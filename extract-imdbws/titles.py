@@ -1,11 +1,5 @@
 # Converts TSV data from IMDB into a MongoDB collection.
 
-#import operator
-#from functools import reduce
-#from datetime import datetime
-
-#from dateutil import parser
-
 import os
 import csv
 
@@ -18,16 +12,19 @@ path = root_path + "/datasets.imdbws.com/title.basics.tsv"
 
 counter = 0
 
-for row in csv.DictReader(open(path), delimiter='\t'):
+for row in csv.DictReader(open(path), delimiter='\t', quoting=csv.QUOTE_NONE):
     t = {}
     for k, v in row.items():
-        if v == "\\N":
+        if v == '\\N':
             v = None
-        if k == "tconst":
-            k = "_id"
+        if k == 'tconst':
+            k = '_id'
+        if k == 'isAdult':
+            v = True if v == '1' else False
         if k in ["originalTitle", "endYear"]:
             continue
         t[k] = v
+
     if t['runtimeMinutes']:
         t['runtimeMinutes'] = int(t['runtimeMinutes'])
 

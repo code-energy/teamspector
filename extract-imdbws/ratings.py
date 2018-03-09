@@ -14,7 +14,7 @@ path = root_path + "/datasets.imdbws.com/title.ratings.tsv"
 
 counter = 0
 
-for row in csv.DictReader(open(path), delimiter='\t'):
+for row in csv.DictReader(open(path), delimiter='\t', quoting=csv.QUOTE_NONE):
     if db.titles.find_one({'_id': row['tconst']}):
         db.titles.update({'_id': row['tconst']}, {'$set':
                          {'averageRating': Decimal128(row['averageRating']),

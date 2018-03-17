@@ -13,7 +13,12 @@ import seaborn as sns
 
 db = MongoClient().imdbws
 
-data = db.movies.find({}, {'_id': 0, 'numVotes':1, 'averageRating': 1})
+q = {'titleType': 'movie',
+     'isAdult': False,
+     'numVotes': {'$ne': None},
+     'averageRating': {'$ne': None}}
+
+data = db.titles.find(q, {'_id': 0, 'numVotes':1, 'averageRating': 1})
 df = pd.DataFrame(list(data))
 
 # Numpy doesn't support MongoDB's Decimal128, so let's transform it to Float.

@@ -26,10 +26,19 @@ for row in csv.DictReader(open(path), delimiter='\t', quoting=csv.QUOTE_NONE):
         else:
             row['writers'] = row['writers'].split(',')
 
-        db.titles.update({'_id': row['tconst']}, {'$set':
-                         {'directors': row['directors'],
-                          'writers': row['writers']}})
+        db.titles.update_one({'_id': row['tconst']}, {'$set':
+                             {'directors': row['directors'],
+                              'writers': row['writers']}})
 
         counter += 1
         if counter % 10000 == 0:
             print ("{} titles updated.".format(counter))
+
+
+x = db.titles.update_many({'directors': {'$exists': False}},
+                          {'$set': {'directors': None}})
+print("Updated {} titles without directors.".format(x.modified_count))
+
+x = db.titles.update_many({'writers': {'$exists': False}},
+                          {'$set': {'writers': None}})
+print("Updated {} titles without writers.".format(x.modified_count))

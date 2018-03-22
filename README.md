@@ -10,6 +10,11 @@ social data. It was used in the following research:
 
 # Directions for Improvement
 
+## Crew member success prediction
+
+Build a model to predict how likely a crew member is to take part in the future
+most important movies.
+
 ## Normalizing number of votes
 - Normalize votes in a zero-one scale, according to other movies produced in
   the same year. This could reduce the problem that older movies have had more

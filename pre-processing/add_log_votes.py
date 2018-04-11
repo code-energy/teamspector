@@ -5,9 +5,13 @@ import math
 db = MongoClient().imdbws
 
 i = 0
-for m in db.movies.find({'log_votes': {'$exists': False}}):
+for m in db.titles.find({'log_votes': {'$exists': False},
+                         'numVotes': {'$ne': None}}):
         i += 1
-        db.movies.update({'_id': m['_id']},
-                         {'$set': {'log_votes':  math.log(m['numVotes'])}})
+        db.titles.update_one({'_id': m['_id']},
+            {'$set': {'log_votes':  math.log(m['numVotes'])}})
         if i % 1000 == 0:
-            print("{} movies updated.".format(i))
+            print("{} titles updated.".format(i))
+
+x = db.titles.update_many({'numVotes': None}, {'$set': {'log_votes': None}})
+print("Updated {} titles without ratings.".format(x.modified_count()))

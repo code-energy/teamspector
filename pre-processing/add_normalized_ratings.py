@@ -16,10 +16,15 @@ db = client.imdbws
 m = 25000
 C = 7.0
 
-for mov in db.movies.find():#{'nrating': {'$exists': False}}):
+for mov in db.titles.find({'numVotes': {'$ne': None},
+                           'averageRating': {'$ne': None}}):
     v = mov['numVotes']
     R = float(mov['averageRating'].to_decimal())
 
     wr = float((R * v) + (C * m))/(v + m)
 
-    db.movies.update({'_id': mov['_id']}, {'$set': {'nrating': wr}})
+    db.titles.update({'_id': mov['_id']}, {'$set': {'nrating': wr}})
+
+
+x = db.titles.update_many({'numVotes': None}, {'$set': {'nrating': None}})
+print("Updated {} titles without ratings.".format(x.modified_count()))

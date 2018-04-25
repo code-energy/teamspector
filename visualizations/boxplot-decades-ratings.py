@@ -7,8 +7,7 @@ plot_config()
 import matplotlib.pyplot as plt
 
 db = MongoClient().imdbws
-data = db.titles.find({'startYear': {'$gte': 1930, '$lte': 2013},
-                       'titleType': 'movie'})
+data = db.titles.find({'is_subject': True})
 df = pd.DataFrame(list(data))
 
 # Numpy doesn't support MongoDB's Decimal128, let's transform it to Float.

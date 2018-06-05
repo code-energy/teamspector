@@ -45,5 +45,5 @@ ax = sns.violinplot(data=dfx, x="numVotes", y="averageRating", showmeans=False,
         showmedians=True, showfliers=False, order=labels, color="seagreen")
 ax.yaxis.grid(True)
 ax.set_ylim(1,10)
-ax.figure.savefig("votes-ratings.pdf")
+ax.figure.savefig("violin-ratings-per-votes.pdf")
 plt.close()

@@ -1,9 +1,10 @@
-# Adds percentiles for the normalized ratings, and for the number of votes.
-# Adds a success percentile based on the sum of the above percentiles.
-# Bins movies into three groups:
-#   A: 0.95–1 success percentile. (~15K movies)
-#   B: 0.9–0.95 success percentile. (~15K movies)
-#   C: 0—0.95 success percentile. (~284K movies)
+# A yearly and global success percentile is calculated, based on the
+# percentiles for normalized ratings, and for the number of votes.
+#
+# Movies are also assigned into three groups:
+#   A: top 100 movies for the year.
+#   B: top 100-200 movies for the year.
+#   C: the rest of the movies.
 
 import pandas as pd
 
@@ -11,26 +12,35 @@ from pymongo import MongoClient
 
 client = MongoClient()
 db = client.imdbws
+df = pd.DataFrame(list(db.titles.find({'is_subject': True})))
 
-data = db.titles.find({'is_subject': True})
-df = pd.DataFrame(list(data))
+r = df.groupby('startYear').log_votes.apply(lambda x: x.rank(pct=True))
+df['ypct_logvotes'] = r
 
-df['percentile_log_votes'] = df['log_votes'].rank(pct=True)
-df['percentile_nrating'] = df['nrating'].rank(pct=True)
-df['sum_percentiles'] = (df['percentile_log_votes'] + df['percentile_nrating'])
-df['percentile_sum_success'] = df['sum_percentiles'].rank(pct=True)
+r = df.groupby('startYear').nrating.apply(lambda x: x.rank(pct=True))
+df['ypct_nrating'] = r
 
-bins = [0, 0.9, 0.95, 1]
-labels = ['C', 'B', 'A']
-df['group'] = pd.cut(df.percentile_sum_success, bins=bins, labels=labels)
+df['pct_logvotes'] = df.log_votes.rank(pct=True)
+df['pct_nrating'] = df.nrating.rank(pct=True)
+
+df['pct'] = (df.pct_nrating + df.pct_logvotes).rank(pct=True)
+
+year_rank = lambda x: (x.ypct_logvotes + x.ypct_nrating).rank(pct=True)
+g = df.groupby('startYear', as_index=False)
+df['ypct'] = g.apply(year_rank).reset_index(level=0, drop=True)
+
+df['group'] = 'C'
+yrank = df.groupby('startYear').ypct.rank(method='first', ascending=False)
+df.loc[yrank <= 200, 'group'] = 'B'
+df.loc[yrank <= 100, 'group'] = 'A'
 
 i = 0
-for _, row in df.iterrows():
+for _, r in df.iterrows():
     i += 1
-    new_data = {'percentile_log_votes': row['percentile_log_votes'],
-                'percentile_nrating': row['percentile_nrating'],
-                'percentile_sum_success': row['percentile_sum_success'],
-                'group': row['group']}
-    db.titles.update({'_id': row['_id']}, {'$set': new_data})
+    data = {'ypct': r['ypct'], 'ypct_votes': r['ypct_logvotes'],
+            'ypct_rating': r['ypct_nrating'], 'pct': r['pct'],
+            'pct_votes': r['pct_logvotes'], 'pct_rating': r['pct_nrating'],
+            'group': r['group']}
+    db.titles.update({'_id': r['_id']}, {'$set': data})
     if i % 1000 == 0:
         print("{} titles updated.".format(i))

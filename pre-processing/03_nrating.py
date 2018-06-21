@@ -17,7 +17,7 @@ m = 25000
 C = 7.0
 
 i= 0
-for mov in db.titles.find({'nrating': {'$exists': False}}):
+for mov in db.titles.find({'nrating': {'$exists': False}, 'is_subject': True}):
     i += 1
     v = mov['numVotes'] or 2
     if mov['averageRating']:

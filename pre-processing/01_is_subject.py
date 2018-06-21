@@ -8,7 +8,7 @@ i = 0
 for m in db.titles.find({'is_subject': {'$exists': False}}):
         i += 1
         is_subject = True
-        if not m['startYear'] or not (1930 <= m['startYear'] <= 2013):
+        if not m['startYear'] or not (1912 <= m['startYear'] <= 2012):
             is_subject = False
         if m['titleType'] != 'movie':
             is_subject = False

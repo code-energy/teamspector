@@ -7,3 +7,4 @@
 *.png
 *.pdf
 .cache*
+.ipynb*

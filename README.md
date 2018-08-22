@@ -1,66 +1,17 @@
-# About Teamspector
+# Teamspector
 Teamspector is a complex network framework for experimenting with collaborative
-social data. It was used in the following research:
+data. Currently it includes:
 
-- A Network Analysis on Movie Producing Teams and Their Success, LA-WEB '14
-  (<http://dl.acm.org/citation.cfm?id=2708863>)
-- Pick the Right Team and Make a Blockbuster: a Social Analysis through
-  Movie History, SAC '16
+- IMDb data extraction (`extract-imdbws`)
+- IMDb data pre-processing.
+- IMDb data EDA.
 
+# Future Work
 
-# Directions for Improvement
-
-## Crew member success prediction
-
-Build a model to predict how likely a crew member is to take part in the future
-most important movies.
-
-## Normalizing number of votes
-- Normalize votes in a zero-one scale, according to other movies produced in
-  the same year. This could reduce the problem that older movies have had more
-  time to accumulate votes.
-
-## Bugs to fix
-- The IMDB dataset has upgraded its database format since this project was
-  created. A lot of data that was present in the earlier version was removed.
-  Some of the removed data was unreliable (e.g., financial information), so
-  that wasn't so bad. The data extraction routine needs to be converted to work
-  with the new dataset format.
-
-## Data visualization and graphs
-- Perform network renderings with Gephi.
-
-## Topological information extraction from movie teams
-- Add and evaluate Hyperbolic Centrality, from Paolo Boldi.
-- Better use the weight information in the edges:
-    - Clustering coefficient that considers the weight.
-    - Implement/evaluate second type of weight: the strength of the edge
-      increases in inverse proportion to total number of producers in the team.
-- Nestedness: see if it can add novel information from teams or individuals.
-- Incorporate homophily measures: https://goo.gl/WbyMQI.
-
-## Non-Topological information extraction from movie teams
-- Use the locations from movies (i.e. location history diversity from team
-  members as a new ego or team metric).
-
-## Methodology
-- Improve the IMDB data extracting script.
-- Map everything that might change between experiments
-    - Create a JSON structure with that, to describe a different experiment.
-- Define a minimal key performance indicators number(s) for experiments.
-- Record experiment results and unique JSON settings upon running experiments.
-
-## Regression Accuracy
-- Use Amazon Machine Learning: https://aws.amazon.com/machine-learning/.
-
-## Dataset
-- Incorporate data from the MovieLens dataset:
+## New Data Sources
+- The MovieLens dataset:
   http://files.grouplens.org/datasets/movielens/ml-20m-README.html
-- Get all useful information from IMDB into the internal MongoDB collection.
-  Example of information that could be useful: color info, languages, plot,
-  votes distribution, etc. See
-  http://imdbpy.sourceforge.net/docs/README.package.txt.
-- Incorporate other types of social networks:
+- Other collaborative networks:
     - Scientific Research,
       http://www.icir.org/christian/scholar.html (google schoolar scrapper)
     - Github projects
@@ -70,14 +21,10 @@ most important movies.
     - Small size military units
     - Book authors
 
-## Research Hypothesis
+## New Research Hypothesis
 - Study the maturation time for nodes to become productive. Detect with nodes
   aren't maturating on time, predict whether they will maturate at all.
 - Study whether teams with more influent nodes produce better results.
-
-## Code Quality
-- Unit tests to ensure that the random clustering coefficient and path length
-  are being computed correctly.
 
 # Related Work
 

@@ -1,4 +1,5 @@
-# Adds a weighted rating field based on the Bayesian estimate used by iMDB.
+# Adds a weighted rating field based on the Bayesian estimate that IMDb claimed
+# to have used priorly.
 #
 # weighted rating (WR) = (v ÷ (v+m)) × R + (m ÷ (v+m)) × C
 # Where:
@@ -20,7 +21,7 @@ m = 25000
 M = 5000
 C = 7.0
 
-i= 0
+i = 0
 for mov in db.titles.find({'nrating': {'$exists': False}, 'is_subject': True}):
     i += 1
     v = mov['numVotes']

@@ -4,16 +4,14 @@ data. Currently it includes:
 
 - IMDb data extraction (`extract-imdbws`)
 - IMDb data pre-processing.
-- IMDb data EDA.
+- IMDb EDA.
 
 # Future Work
 
 ## New Data Sources
-- The MovieLens dataset:
-  http://files.grouplens.org/datasets/movielens/ml-20m-README.html
+- [The MovieLens dataset](http://files.grouplens.org/datasets/movielens/ml-20m-README.html).
 - Other collaborative networks:
-    - Scientific Research,
-      http://www.icir.org/christian/scholar.html (google schoolar scrapper)
+    - Scientific Research ([google schoolar scrapper](http://www.icir.org/christian/scholar.html))
     - Github projects
     - Board of directors
     - High school students
@@ -22,7 +20,7 @@ data. Currently it includes:
     - Book authors
 
 ## New Research Hypothesis
-- Study the maturation time for nodes to become productive. Detect with nodes
+- Study the maturation time for nodes to become productive. Detect which nodes
   aren't maturating on time, predict whether they will maturate at all.
 - Study whether teams with more influent nodes produce better results.
 

@@ -3,7 +3,7 @@
 import os
 import csv
 
-from pymongo import MongoClient
+from pymongo import MongoClient, ASCENDING
 
 db = MongoClient().imdbws
 
@@ -11,6 +11,10 @@ root_path = os.path.dirname(os.path.realpath(__file__))
 path = root_path + "/datasets.imdbws.com/title.basics.tsv"
 
 counter = 0
+
+
+db.titles.create_index([('startYear', ASCENDING), ('_id', ASCENDING)])
+
 
 for row in csv.DictReader(open(path), delimiter='\t', quoting=csv.QUOTE_NONE):
     t = {}
@@ -36,6 +40,6 @@ for row in csv.DictReader(open(path), delimiter='\t', quoting=csv.QUOTE_NONE):
 
     counter += 1
     if counter % 10000 == 0:
-        print ("{} titles inserted.".format(counter))
+        print("{} titles inserted.".format(counter))
 
     db.titles.save(t)

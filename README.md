@@ -1,12 +1,24 @@
 # Teamspector
-Teamspector is a complex network framework for experimenting with collaborative
-data. Currently it includes:
+Teamspector is a complex networks framework for experimenting with
+collaborative data. Currently it includes:
 
 - IMDb data extraction (`extract-imdbws`)
 - IMDb data pre-processing.
 - IMDb EDA.
 
-# Future Work
+# Getting Started
+
+Make sure you have all dependencies in `requirements.txt` installed. Installing
+dependencies into a dedicated python virtual environment is advised.
+
+First, download the IMDb data sources and extract it to a local MongoDB
+collection:
+
+    $ cd extract-imdbws
+    $ mkdir datasets.imdbws.com
+    $ wget -q -P datasets.imdbws.com -i files.txt
+    $ gunzip datasets.imdbws.com/*.gz
+    $ for f in *.py; do python "$f"; done
 
 ## New Data Sources
 - [The MovieLens dataset](http://files.grouplens.org/datasets/movielens/ml-20m-README.html).

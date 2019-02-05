@@ -19,6 +19,8 @@ collection:
     $ wget -q -P datasets.imdbws.com -i files.txt
     $ gunzip datasets.imdbws.com/*.gz
     $ for f in *.py; do python "$f"; done
+    $ cd ../pre-processing
+    $ for f in *.py; do python "$f"; done
 
 ## New Data Sources
 - [The MovieLens dataset](http://files.grouplens.org/datasets/movielens/ml-20m-README.html).

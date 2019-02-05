@@ -52,4 +52,4 @@ for _, r in df.iterrows():
             'top100': r['top100']}
     db.titles.update({'_id': r['_id']}, {'$set': data})
     if i % 1000 == 0:
-        print("{} titles updated.".format(i))
+        print(f"{i} titles updated.")

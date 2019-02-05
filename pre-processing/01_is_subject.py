@@ -2,6 +2,8 @@ from pymongo import MongoClient
 
 db = MongoClient().imdbws
 
+db.titles.create_index('is_subject')
+
 i = 0
 for m in db.titles.find({'is_subject': {'$exists': False}}):
         i += 1
@@ -17,6 +19,4 @@ for m in db.titles.find({'is_subject': {'$exists': False}}):
                              {'$set': {'is_subject':  is_subject}})
 
         if i % 1000 == 0:
-            print("{} titles updated.".format(i))
-
-db.titles.create_index('is_subject')
+            print(f"{i} titles updated.")

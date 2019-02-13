@@ -4,6 +4,8 @@ from pymongo import MongoClient
 
 db = MongoClient().imdbws
 
+db.titles.create_index('team')
+
 i = 0
 for m in db.titles.find({'team': {'$exists': False}, 'is_subject': True}):
         i += 1

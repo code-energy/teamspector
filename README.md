@@ -1,16 +1,47 @@
-# Teamspector
 Teamspector is a complex networks framework for experimenting with
 collaborative data. Currently it includes:
 
-- IMDb data extraction (`extract-imdbws`)
-- IMDb data pre-processing.
-- IMDb EDA.
+- An IMDb data extraction tool,
+- IMDb data pre-processing scripts,
+- An EDA notebook for IMDb data,
+- Scripts to build a social network from IMDb data, and to extract each movie's
+  social and success metrics.
 
 # Getting Started
 
-Make sure you have all dependencies in `requirements.txt` installed. Installing
-dependencies into a dedicated python virtual environment is advised.
+## MongoDB
+Make sure MongoDB 4.x is installed and its daemon is running in your system. Do
+to it with Mac OS X and Macports,
 
+    $ sudo port install mongodb
+
+## Python
+Ensure you have all dependencies in `requirements.txt` installed in a dedicated
+python virtual environment. You can use `virtualenvwrapper` to create your
+virtual environment. To install it,
+
+    $ sudo pip install virtualenvwrapper
+    $ mkdir ~/.virtualenvs
+
+Then add these two lines to your `~/.profile` file:
+
+    export WORKON_HOME=~/.virtualenvs
+    source virtualenvwrapper.sh
+
+After you restart your shell session, `virtualenvwrapper` should be available.
+You can create a new virtual environment with
+
+    $ mkvirtualenv teamspector
+
+After the environment has been created, activate it
+
+    $ workon teamspector
+
+After the virtual environment is active, install the dependencies by running
+
+    (teamspector) $ pip install -r requirements.txt
+
+## Downloading and Pre-Processing Data
 First, download the IMDb data sources and extract it to a local MongoDB
 collection:
 
@@ -22,6 +53,12 @@ collection:
     $ cd ../pre-processing
     $ for f in *.py; do python "$f"; done
 
+## Running the Experiment
+Afterwards, you can run the experiment by running `build_network.py`:
+
+    $ ./build_network.py
+
+# Future Improvements
 ## New Data Sources
 - [The MovieLens dataset](http://files.grouplens.org/datasets/movielens/ml-20m-README.html).
 - Other collaborative networks:
@@ -33,10 +70,21 @@ collection:
     - Small size military units
     - Book authors
 
+## Improved Topological Information Extraction
+- Add and evaluate Hyperbolic Centrality, from Paolo Boldi.
+- Better use the weight information in the edges:
+    - Clustering coefficient that considers the weight.
+    - Implement/evaluate second type of weight: the strength of the edge
+      increases in inverse proportion to total number of producers in the team.
+- Nestedness: see if it can add novel information from teams or individuals.
+- Incorporate homophily measures: https://goo.gl/WbyMQI.
+
 ## New Research Hypothesis
 - Study the maturation time for nodes to become productive. Detect which nodes
   aren't maturating on time, predict whether they will maturate at all.
 - Study whether teams with more influent nodes produce better results.
+- Predict how likely a crew member is to take part in any of the future most
+  important movies next year.
 
 # Related Work
 

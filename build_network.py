@@ -82,7 +82,7 @@ def calc_ego_metrics(H, team, release, base_qry):
     Returns a dictionary where keys are ego metric names, and values are the
     computed values from each team member.
     """
-    results = {}
+    m = {}
     metrics = [o for o in getmembers(ego) if IS_VALID_FUNCTION(o)]
 
     for metric_name, metric_func in metrics:
@@ -90,9 +90,9 @@ def calc_ego_metrics(H, team, release, base_qry):
         values = []
         for member in team:
             values.append(metric_func(H, member, release, base_qry.copy()))
-        results[metric_name] = values
+        m[f'ego_{metric_name}'] = values
 
-    return results
+    return m
 
 
 def calc_pair_metrics(H, team):
@@ -101,14 +101,14 @@ def calc_pair_metrics(H, team):
     team pairs. Returns a dictionary where keys are the pair metric names, and
     values are the computed values from each pair.
     """
-    results = {}
+    m = {}
     metrics = [o for o in getmembers(pair) if IS_VALID_FUNCTION(o)]
 
     for metric_name, metric_func in metrics:
         logger.debug(f"Calculating pair metric {metric_name}")
-        results[metric_name] = metric_func(H, team)
+        m[f'pair_{metric_name}'] = metric_func(H, team)
 
-    return results
+    return m
 
 
 def calc_team_metrics(H, team, release, base_qry):
@@ -119,16 +119,16 @@ def calc_team_metrics(H, team, release, base_qry):
     """
     _H = contract_edges(H, team)
 
-    results = {}
+    m = {}
     metrics = [o for o in getmembers(ego) if IS_VALID_FUNCTION(o)]
     for metric_name, metric_func in metrics:
         logger.debug(f"Calculating team metric {metric_name}")
         qry = base_qry.copy()
-        results[metric_name] = metric_func(_H, 'contracted', release, qry)
+        m[f'team_{metric_name}'] = metric_func(_H, 'contracted', release, qry)
 
-    results['team_size'] = len(team)
+    m['team_size'] = len(team)
 
-    return results
+    return m
 
 
 def build_team(mov, specs):
@@ -228,15 +228,16 @@ def process_movies(components, year):
         ego_agg = calculate_aggregations(ego_metrics)
         pair_agg = calculate_aggregations(pair_metrics)
 
-        exp = {'team_metrics': team_metrics,
-               'ego_metrics': ego_agg,
-               'pair_metrics': pair_agg,
-               'title': mov['primaryTitle'],
+        exp = {'title': mov['primaryTitle'],
                'year': year,
                'ypct': mov['ypct'],
                'ypct_votes': mov['ypct'],
                'ypct_rating': mov['ypct'],
                'top100': mov['top100']}
+
+        exp.update(team_metrics)
+        exp.update(ego_agg)
+        exp.update(pair_agg)
 
         target = db[f"exp_{EXP['id']}"]
         target.update_one({'_id': mov['_id']}, {'$set': exp}, upsert=True)

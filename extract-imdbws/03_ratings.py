@@ -1,5 +1,5 @@
-# Adds TSV data of movie ratings from IMDB into a MongoDB collection. Also
-# removes movies that have zero ratings.
+# Adds TSV data of movie ratings from IMDB into a MongoDB collection. Movies
+# for which no ratings are available receive a NULL value.
 
 import os
 import csv

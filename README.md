@@ -58,6 +58,43 @@ Afterwards, you can run the experiment by running `build_network.py`:
 
     $ ./build_network.py
 
+# Dataset Description
+
+The IMDb dataset is provided by Amazon: <https://www.imdb.com/interfaces/>.
+This website describes in detail the data that's made available. All movies are
+considered, except for:
+
+    - Movies without year of release,
+    - Not feature-length, cinema productions (`titleType != movie`),
+    - Adult movies (`isAdult = True`).
+
+# Pre-Processing
+During pre-processing, movies' number of votes (`numVotes`) is converted into a
+logarithm `log_votes`, as it has an exponential distribution.
+
+Movie's average ratings are normalized using a Bayesian estimate into
+`nrating`, as there are wild differences in the sample sizes taken into account
+to produce the average. We suppose the Bayesian estimate can be trusted only
+for movies that have received five thousands of votes or more, hence `nrating`
+is only defined for movies with `numVotes` ≥ 5000.
+
+To calculate movie's success metrics, we compare how well a movie did in
+metrics of `log_votes` and `nratings` compared to other movies produced in the
+same year. The percentile of a movie's `log_votes` and `nratings` within movies
+produced in the same year is computed as `ypct_votes` and `ypct_rating`.
+
+To produce our final movie score metric, we movie's `ypct_votes` and
+`ypct_rating`, and get the movie's percentile of this sum into `ypct`. Again
+only considering movies produced in the same year. In other words, if a movie
+has `ypct = 0.99`, this means the movie is considered better than 99% of the
+movies produced in the year the movie came out.
+
+Finally, a binary success metric, `top100`, is defined to capture if the movie
+was one of the best 100 movies produced in the year as measured by `ypct`. It's
+only after 1985 that we have more than 100 movies each year that have a valid
+`nratings` value, hence the `top100` metric is only defined for movies produced
+this year or afterwards.
+
 # Future Improvements
 ## New Data Sources
 - [The MovieLens dataset](http://files.grouplens.org/datasets/movielens/ml-20m-README.html).

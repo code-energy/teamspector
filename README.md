@@ -56,7 +56,7 @@ collection:
 ## Running the Experiment
 Afterwards, you can run the experiment by running `build_network.py`:
 
-    $ ./build_network.py
+    $ python build_network.py
 
 # Dataset Description
 

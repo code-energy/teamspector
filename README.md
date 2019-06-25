@@ -95,7 +95,33 @@ only after 1985 that we have more than 100 movies each year that have a valid
 `nratings` value, hence the `top100` metric is only defined for movies produced
 this year or afterwards.
 
-# Future Improvements
+# The Experiment
+
+The goal of this experiment is to test the effect of social network structure
+in human work. The experiment infers the social network graph from a group of
+workers. Workers are nodes. Nodes who previously worked on a same production
+are connected via an edge. Edges are unordered, and their strength is
+proportional to the number of previous productions jointly conducted.
+
+Edges and their nodes are removed from the graph after being inactive for eight
+years. Only productions in which workers are part of the graph's giant
+component are considered.
+
+For each piece of work produced, we measure aspects of the social structure
+from workers responsible for the piece of work, and success metrics related to
+the piece of work. Afterwards, tests are conducted to measure the effect of
+social structure on work success.
+
+In the context of movie production, works are actors, producers, writers and
+directors. Pieces of work are movies, their success metrics are `ypct` and
+`top100`. The `build_network.py` uses the IMDb dataset to build the graph of
+workers. For each movie produced, network metrics from workers and success
+metrics from movies are stored in a separated tabled.
+
+## Methodology
+`TODO`.
+
+# Future Work
 ## New Data Sources
 - [The MovieLens dataset](http://files.grouplens.org/datasets/movielens/ml-20m-README.html).
 - Other collaborative networks:

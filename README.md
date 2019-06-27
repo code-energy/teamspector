@@ -10,22 +10,22 @@ collaborative data. Currently it includes:
 # Getting Started
 You need MongoDB and Python dependencies installed before getting started. For
 specific instructions to install these dependencies, see `INSTALL.md`. If
-you're interesting in contributing pull requests, see `CONTRIBUTING.md`.
+you're interested in contributing pull requests, see `CONTRIBUTING.md`.
 
-## Downloading and Pre-Processing Data
-First, download the IMDb data sources and extract it to a local MongoDB
-collection:
+Download the IMDb data sources and extract it to a local MongoDB collection:
 
     $ cd extract-imdbws
     $ mkdir datasets.imdbws.com
     $ wget -q -P datasets.imdbws.com -i files.txt
     $ gunzip datasets.imdbws.com/*.gz
     $ for f in *.py; do python "$f"; done
+
+Then, pre-process the data:
+
     $ cd ../pre-processing
     $ for f in *.py; do python "$f"; done
 
-## Running the Experiment
-Afterwards, you can run the experiment by running `build_network.py`:
+Afterwards, you can run the experiment:
 
     $ python build_network.py
 
@@ -45,19 +45,19 @@ logarithm `log_votes`, as it has an exponential distribution.
 Movie's average ratings are normalized using a Bayesian estimate into
 `nrating`, as there are wild differences in the sample sizes taken into account
 to produce the average. We suppose the Bayesian estimate can be trusted only
-for movies that have received five thousands of votes or more, hence `nrating`
-is only defined for movies with `numVotes` ≥ 5000.
+for movies that received five thousands of votes or more, hence `nrating` is
+only defined for movies with `numVotes` ≥ 5000.
 
-To calculate movie's success metrics, we compare how well a movie did in
-metrics of `log_votes` and `nratings` compared to other movies produced in the
-same year. The percentile of a movie's `log_votes` and `nratings` within movies
-produced in the same year is computed as `ypct_votes` and `ypct_rating`.
+To calculate movie's success metrics, we check how well a movie did in terms of
+`log_votes` and `nratings`, compared to other movies produced in the same year.
+The percentile of a movie's `log_votes` and `nratings` within movies produced
+in the same year is computed as `ypct_votes` and `ypct_rating`.
 
-To produce our final movie score metric, we movie's `ypct_votes` and
-`ypct_rating`, and get the movie's percentile of this sum into `ypct`. Again
-only considering movies produced in the same year. In other words, if a movie
-has `ypct = 0.99`, this means the movie is considered better than 99% of the
-movies produced in the year the movie came out.
+To produce our final movie score metric, `ypct_votes` and `ypct_rating` are
+summed. The movie's percentile of this sum is computed into `ypct`. For this
+percentile, we only consider movies produced in the same year. In other words,
+if a movie has `ypct = 0.99`, this means the movie is considered better than
+99% of the movies produced in the year the movie came out.
 
 Finally, a binary success metric, `top100`, is defined to capture if the movie
 was one of the best 100 movies produced in the year as measured by `ypct`. It's

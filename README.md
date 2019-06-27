@@ -99,9 +99,9 @@ this year or afterwards.
 
 The goal of this experiment is to test the effect of social network structure
 in human work. The experiment infers the social network graph from a group of
-workers. Workers are nodes. Nodes who previously worked on a same production
-are connected via an edge. Edges are unordered, and their strength is
-proportional to the number of previous productions jointly conducted.
+workers. Workers are nodes. Nodes who previously worked together are connected
+via an edge. Edges are unordered, and their strength is proportional to the
+number of previous works jointly conducted.
 
 Edges and their nodes are removed from the graph after being inactive for eight
 years. Only productions in which workers are part of the graph's giant
@@ -116,10 +116,46 @@ In the context of movie production, works are actors, producers, writers and
 directors. Pieces of work are movies, their success metrics are `ypct` and
 `top100`. The `build_network.py` uses the IMDb dataset to build the graph of
 workers. For each movie produced, network metrics from workers and success
-metrics from movies are stored in a separated tabled.
+metrics from movies are stored in a separated table.
 
 ## Methodology
-`TODO`.
+The experiment runs in a loop, where each year is analysed at a time. IMDb only
+provides movies' year of release, forcing us to consider movies produced in a
+given year are all produced and released simultaneously.
+
+We begin with an empty list of network graphs L.
+
+Before each iteration of the loop, each graph in L is inspected and nodes that
+haven't produced any work for over 8 years are removed along with its edges. If
+this causes any of the graphs to become disconnected, the disconnected graphs
+are added to L, while the original graph is removed from L
+
+Then, we look into the productions released in the year. For each production,
+we find the graphs in L which contain any of the production's workers. Workers
+not present in the graph are added to the graph as new nodes. Edges between
+workers are added, or strengthened in case they already exist. If we have
+selected more than one graph from L, the now connected graphs are joined into a
+single graph, which is added to L, and the original graphs which were joined
+are removed from L.
+
+### Time Frame
+Experiments' metrics are only collected starting from 1985, as success metrics
+might not be reliable prior to this year. The experiment runs from 1985 to
+2012. The reason 2012 was chosen instead of a more recent year is that we don't
+know how long it takes after a movie is released for the `ypct` and `top100` to
+stabilize. We assume five years is a safe pick.
+
+### Team Structure
+For a large portion of movies, IMDb provides a list of producers, directors,
+writers and actors. For some famous movies, more elements from the production
+team may be available, such as editors, composers, and cinematographers.
+
+Due to computational constraints, the experiment is configured to consider only
+producers, directors and writers. Considering actors, the graphs become
+exceedingly big for centrality network metrics to be computed.
+
+### Network Metrics
+TODO
 
 # Future Work
 ## New Data Sources

@@ -126,9 +126,9 @@ given year are all produced and released simultaneously.
 We begin with an empty list of network graphs L.
 
 Before each iteration of the loop, each graph in L is inspected and nodes that
-haven't produced any work for over 8 years are removed along with its edges. If
-this causes any of the graphs to become disconnected, the disconnected graphs
-are added to L, while the original graph is removed from L
+haven't produced any work for over 8 years are removed along with their edges.
+If this causes any of the graphs to become disconnected, the disconnected
+graphs are added to L, while the original graph is removed from L
 
 Then, we look into the productions released in the year. For each production,
 we find the graphs in L which contain any of the production's workers. Workers
@@ -142,7 +142,7 @@ are removed from L.
 Experiments' metrics are only collected starting from 1985, as success metrics
 might not be reliable prior to this year. The experiment runs from 1985 to
 2012. The reason 2012 was chosen instead of a more recent year is that we don't
-know how long it takes after a movie is released for the `ypct` and `top100` to
+know how long it takes after a movie is released for `ypct` and `top100` to
 stabilize. We assume five years is a safe pick.
 
 ### Team Structure
@@ -150,12 +150,50 @@ For a large portion of movies, IMDb provides a list of producers, directors,
 writers and actors. For some famous movies, more elements from the production
 team may be available, such as editors, composers, and cinematographers.
 
-Due to computational constraints, the experiment is configured to consider only
-producers, directors and writers. Considering actors, the graphs become
-exceedingly big for centrality network metrics to be computed.
+Due to computational constraints, the experiment considers only producers,
+directors and writers. Adding actors, the graphs become exceedingly big for
+centrality network metrics to be feasibly computed.
 
 ### Network Metrics
-TODO
+For each production team, we collect social metrics related to each worker in
+the team individually (Ego metrics), to the pairs of workers in the team (Pair
+metrics) and to the team as a whole (Team metrics).
+
+#### Ego Metrics
+- [Closeness Centrality](https://en.wikipedia.org/wiki/Centrality#Closeness_centrality),
+- [Betweenness Centrality](https://en.wikipedia.org/wiki/Centrality#Betweenness_centrality),
+- [Clustering Coefficient](https://en.wikipedia.org/wiki/Clustering_coefficient),
+- [Square Clustering](https://networkx.github.io/documentation/networkx-1.10/reference/generated/networkx.algorithms.cluster.square_clustering.html),
+- [Network Constraint](https://en.wikipedia.org/wiki/Structural_holes),
+- Node's degreem
+- Past Ratings: mean of `nrating` from node's prior works,
+- Past Votes: mean of `log_votes` from node's prior works,
+- Past Experience: the number of prior works the node was part of,
+
+Each production will have as many ego metrics as the number of people in its
+team. Hence, the maximum, minimum, median and standard deviation from the
+metrics are calculated.
+
+#### Team Metrics
+Via [vertex contraction](http://mathworld.wolfram.com/VertexContraction.html),
+all nodes that participated in the production being studied are temporarily
+transformed in a single node. Then, all ego metrics are recalculated for the
+contracted node representing the team. Besides that, another metric is taken:
+
+- Team size: the number of nodes in the production team.
+
+#### Pair Metrics
+
+- Shared Collaborators: the number of nodes connected to both nodes of the
+  pair,
+- Neighbour Overlap: the shared collaborators number, divided by the number of
+  nodes connected to either one of the nodes of the pair,
+  the proportion of friends which are connected to both nodes,
+- Past experience: the weight of the edge connecting the two nodes,
+
+Production teams with more than two members will have many pairs. Hence, the
+same aggregate statistics used for the Ego metrics are also used for the Pair
+metrics.
 
 # Future Work
 ## New Data Sources

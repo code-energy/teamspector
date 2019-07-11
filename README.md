@@ -1,33 +1,21 @@
 Teamspector is a complex networks framework for experimenting with
 collaborative data. Currently it includes:
 
-- An IMDb data extraction tool,
-- IMDb data pre-processing scripts,
-- An EDA notebook for IMDb data,
+- An IMDb data extraction and pre-processing tools,
+- An EDA notebook for exploring IMDb data,
 - Scripts to build a social network from IMDb data, and to extract each movie's
   social and success metrics.
 
 # Getting Started
-You need MongoDB and Python dependencies installed before getting started. For
-specific instructions to install these dependencies, see `INSTALL.md`. If
-you're interested in contributing pull requests, see `CONTRIBUTING.md`.
+Teamspector needs MongoDB, and should be installed in its own virtual
+environment. For installation instructions, see `INSTALL.md`.  After installing
+Teamspector, download the IMDb data sources, extract the data to a local
+MongoDB collection, run the pre-processing rules, and start the experiment:
 
-Download the IMDb data sources and extract it to a local MongoDB collection:
-
-    $ cd extract-imdbws
-    $ mkdir datasets.imdbws.com
-    $ wget -q -P datasets.imdbws.com -i files.txt
-    $ gunzip datasets.imdbws.com/*.gz
-    $ for f in *.py; do python "$f"; done
-
-Then, pre-process the data:
-
-    $ cd ../pre-processing
-    $ for f in *.py; do python "$f"; done
-
-Afterwards, you can run the experiment:
-
-    $ python build_network.py
+    $ download-imdbws
+    $ extract-imdbws
+    $ preprocess-imdbws
+    $ experiment-imdbws
 
 # Dataset
 The IMDb dataset is provided by Amazon: <https://www.imdb.com/interfaces/>.
@@ -164,5 +152,9 @@ contracted node representing the team. Besides that, another metric is taken:
 Production teams with more than two members will have many pairs. Hence, the
 same aggregate statistics used for the Ego metrics are also used for the Pair
 metrics.
+
+# Contributing
+If you like this project and want to participate, there's a lot of ways you can
+help. Check out `CONTRIBUTING.md` for more info.
 
 <!-- vim: set fdm=marker textwidth=79 colorcolumn=80: -->

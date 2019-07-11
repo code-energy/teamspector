@@ -1,0 +1,5 @@
+#!/bin/bash
+TFILE=`python -c 'import teamspector; print(teamspector.__file__)'`
+TPATH=$(dirname ${TFILE})
+wget -c -v -P ${TPATH}/datasets/imdbws -i ${TPATH}/extract-imdbws/files.txt
+gunzip -v --keep ${TPATH}/datasets/imdbws/*.gz

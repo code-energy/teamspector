@@ -1,0 +1,4 @@
+#!/bin/bash
+TFILE=`python -c 'import teamspector; print(teamspector.__file__)'`
+TPATH=$(dirname ${TFILE})/extract-imdbws/*.py
+for f in ${TPATH}; do python "$f"; done

@@ -10,7 +10,7 @@ from bson.decimal128 import Decimal128
 db = MongoClient().imdbws
 
 root_path = os.path.dirname(os.path.realpath(__file__))
-path = root_path + "/datasets.imdbws.com/title.ratings.tsv"
+path = root_path + "/../datasets/imdbws/title.ratings.tsv"
 
 counter = 0
 
@@ -22,7 +22,7 @@ for row in csv.DictReader(open(path), delimiter='\t', quoting=csv.QUOTE_NONE):
 
         counter += 1
         if counter % 10000 == 0:
-            print ("{} titles updated.".format(counter))
+            print("{} titles updated.".format(counter))
 
 
 x = db.titles.update_many({'numVotes': {'$exists': False}},

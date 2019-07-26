@@ -34,9 +34,6 @@ EXP = {'id': 0,
        'filter': {'is_subject': True}}
 
 
-IS_VALID_FUNCTION = lambda x: x[0][0] != '_' and isfunction(x[1])
-
-
 def contract_edges(G, nodes):
     """
     Contracts edges of nodes in the graph. Returns the result in a new graph.
@@ -71,7 +68,7 @@ def calculate_aggregations(data):
     results = {}
     for metric_name, metric in data.items():
         metric = list(filter(lambda x: x is not None, metric))
-        aggs = [o for o in getmembers(aggregations) if IS_VALID_FUNCTION(o)]
+        aggs = [getattr(aggregations, x) for x in aggregations.__all__]
         for agg_name, agg_func in aggs:
             result = agg_func(metric) if metric else None
             results['%s_%s' % (metric_name, agg_name)] = result
@@ -85,7 +82,7 @@ def calc_ego_metrics(H, team, release, base_qry):
     computed values from each team member.
     """
     m = {}
-    metrics = [o for o in getmembers(ego) if IS_VALID_FUNCTION(o)]
+    metrics = [getattr(ego, x) for x in ego.__all__]
 
     for metric_name, metric_func in metrics:
         logger.debug(f"Calculating ego metric {metric_name}")
@@ -104,8 +101,8 @@ def calc_pair_metrics(H, team):
     values are the computed values from each pair.
     """
     m = {}
-    metrics = [o for o in getmembers(pair) if IS_VALID_FUNCTION(o)]
 
+    metrics = [getattr(pair, x) for x in pair.__all__]
     for metric_name, metric_func in metrics:
         logger.debug(f"Calculating pair metric {metric_name}")
         m[f'pair_{metric_name}'] = metric_func(H, team)
@@ -122,7 +119,7 @@ def calc_team_metrics(H, team, release, base_qry):
     _H = contract_edges(H, team)
 
     m = {}
-    metrics = [o for o in getmembers(ego) if IS_VALID_FUNCTION(o)]
+    metrics = [getattr(ego, x) for x in ego.__all__]
     for metric_name, metric_func in metrics:
         logger.debug(f"Calculating team metric {metric_name}")
         qry = base_qry.copy()

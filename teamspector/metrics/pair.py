@@ -4,6 +4,9 @@ import random
 from itertools import combinations
 
 
+__all__ = ['neighbour_overlap', 'past_experience', 'shared_collaborators']
+
+
 def _random_pair(team):
     first, second = sorted(random.sample(range(len(team)), 2))
     return tuple(sorted([team[first], team[second]]))

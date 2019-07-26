@@ -10,15 +10,15 @@ from bson.decimal128 import Decimal128
 db = MongoClient().imdbws
 
 root_path = os.path.dirname(os.path.realpath(__file__))
-path = root_path + "/../datasets/imdbws/title.ratings.tsv"
+path = root_path + "/../raw/title.ratings.tsv"
 
 counter = 0
 
 for row in csv.DictReader(open(path), delimiter='\t', quoting=csv.QUOTE_NONE):
     if db.titles.find_one({'_id': row['tconst']}):
-        db.titles.update_one({'_id': row['tconst']}, {'$set':
-            {'averageRating': Decimal128(row['averageRating']),
-            'numVotes': int(row['numVotes'])}})
+        x = {'$set': {'averageRating': Decimal128(row['averageRating']),
+                      'numVotes': int(row['numVotes'])}}
+        db.titles.update_one({'_id': row['tconst']}, x)
 
         counter += 1
         if counter % 10000 == 0:

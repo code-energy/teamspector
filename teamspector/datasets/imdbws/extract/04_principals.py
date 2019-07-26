@@ -9,7 +9,7 @@ from pymongo import MongoClient
 db = MongoClient().imdbws
 
 root_path = os.path.dirname(os.path.realpath(__file__))
-path = root_path + '/../datasets/imdbws/title.principals.tsv'
+path = root_path + '/../raw/title.principals.tsv'
 
 counter = 0
 

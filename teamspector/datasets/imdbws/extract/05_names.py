@@ -8,7 +8,7 @@ from pymongo import MongoClient
 db = MongoClient().imdbws
 
 root_path = os.path.dirname(os.path.realpath(__file__))
-path = root_path + "/../datasets/imdbws/name.basics.tsv"
+path = root_path + "/../raw/name.basics.tsv"
 
 counter = 0
 
@@ -34,6 +34,6 @@ for row in csv.DictReader(open(path), delimiter='\t', quoting=csv.QUOTE_NONE):
 
     counter += 1
     if counter % 10000 == 0:
-        print ("{} crew inserted.".format(counter))
+        print("{} crew inserted.".format(counter))
 
     db.crew.save(c)

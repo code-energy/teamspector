@@ -1,5 +1,8 @@
 #!/bin/bash
-TFILE=`python -c 'import teamspector; print(teamspector.__file__)'`
-TPATH=$(dirname ${TFILE})
-wget -c -v -P ${TPATH}/datasets/imdbws -i ${TPATH}/extract-imdbws/files.txt
-gunzip -v --keep ${TPATH}/datasets/imdbws/*.gz
+BASE_PATH=`python -c 'import teamspector; print(teamspector.__file__)'`
+BASE_PATH=$(dirname ${BASE_PATH})
+DESTINATION_PATH=${BASE_PATH}/datasets/imdbws/raw
+SOURCE_FILES=${DESTINATION_PATH}/files.txt
+
+wget -c -v -P ${DESTINATION_PATH} -i ${SOURCE_FILES}
+gunzip -v --keep ${DESTINATION_PATH}/*.gz

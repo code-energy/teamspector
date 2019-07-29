@@ -16,7 +16,7 @@ from tqdm import tqdm
 from pymongo import MongoClient
 
 # This package.
-from teamspector import aggregations
+from teamspector import aggregations, contract
 from teamspector.metrics import ego, pair
 from teamspector.bipartite import prune_components, update_components
 from teamspector.datasets.imdbws.experiments import experiments
@@ -27,30 +27,6 @@ logger = logging.getLogger(__file__.split("/")[-1])
 db = MongoClient().imdbws
 
 EXP = experiments[sys.argv[1] if len(sys.argv) > 1 else 0]
-
-def contract_edges(G, nodes):
-    """
-    Contracts edges of nodes in the graph. Returns the result in a new graph.
-    """
-    logger.debug(f"Contracting nodes.")
-
-    G = G.copy()
-    G.add_node('contracted')
-    G.node['contracted']['original'] = nodes
-
-    movies = set()
-    [movies.update(G.node[n]['movies']) for n in nodes]
-    G.node['contracted']['movies'] = list(movies)
-
-    edges = G.edges(nodes, data=True)
-    for e in [e for e in edges if not (e[0] in nodes and e[1] in nodes)]:
-        oute = e[0] if e[1] in nodes else e[1]
-        if not G.has_edge('contracted', oute):
-            G.add_edge('contracted', oute, weight=0)
-        G['contracted'][oute]['weight'] += e[2]['weight']
-
-    G.remove_edges_from(list(edges) + list(nodes))
-    return G
 
 
 def calculate_aggregations(data):
@@ -110,7 +86,7 @@ def calc_team_metrics(H, team, release, base_qry):
     dictionary where keys are the team metric names, and values are the
     computed metric values.
     """
-    _H = contract_edges(H, team)
+    _H = contract.contract_edges(H, team)
 
     m = {}
     metrics = [getattr(ego, x) for x in ego.__all__]

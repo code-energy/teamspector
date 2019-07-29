@@ -5,6 +5,7 @@
 
 # Standard libs.
 import os
+import sys
 import pickle
 import logging
 from inspect import getmembers, isfunction
@@ -18,21 +19,14 @@ from pymongo import MongoClient
 from teamspector import aggregations
 from teamspector.metrics import ego, pair
 from teamspector.bipartite import prune_components, update_components
+from teamspector.datasets.imdbws.experiments import experiments
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__file__.split("/")[-1])
 
 db = MongoClient().imdbws
 
-# XXX: When there are more experiments, define them on an external .py source
-# and import here. The ID of the experiment to be used can be passed through a
-# command line argument.
-EXP = {'id': 0,
-       'team': ['producer', 'director', 'writer'],
-       'year_start': 1985,
-       'year_end': 2012,
-       'filter': {'is_subject': True}}
-
+EXP = experiments[sys.argv[1] if len(sys.argv) > 1 else 0]
 
 def contract_edges(G, nodes):
     """

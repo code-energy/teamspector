@@ -16,9 +16,7 @@ from tqdm import tqdm
 from pymongo import MongoClient
 
 # This package.
-from teamspector import aggregations, contract
-from teamspector.metrics import ego, pair
-from teamspector.bipartite import prune_components, update_components
+from teamspector import network, metrics
 from teamspector.datasets.imdbws.experiments import experiments
 
 logging.basicConfig(level=logging.INFO)
@@ -27,77 +25,6 @@ logger = logging.getLogger(__file__.split("/")[-1])
 db = MongoClient().imdbws
 
 EXP = experiments[sys.argv[1] if len(sys.argv) > 1 else 0]
-
-
-def calculate_aggregations(data):
-    """
-    Receives a dictionary where keys are measurement names and values are lists
-    of measurements. Return a dictionary where keys are aggregations from the
-    values from the input dictionary.
-    """
-    results = {}
-    for metric_name, metric in data.items():
-        metric = list(filter(lambda x: x is not None, metric))
-        aggs = [getattr(aggregations, x) for x in aggregations.__all__]
-        for agg_name, agg_func in aggs:
-            result = agg_func(metric) if metric else None
-            results['%s_%s' % (metric_name, agg_name)] = result
-    return results
-
-
-def calc_ego_metrics(H, team, release, base_qry):
-    """
-    Given a graph and a team, calculates all ego metrics for each team member.
-    Returns a dictionary where keys are ego metric names, and values are the
-    computed values from each team member.
-    """
-    m = {}
-    metrics = [getattr(ego, x) for x in ego.__all__]
-
-    for metric_name, metric_func in metrics:
-        logger.debug(f"Calculating ego metric {metric_name}")
-        values = []
-        for member in team:
-            values.append(metric_func(H, member, release, base_qry.copy()))
-        m[f'ego_{metric_name}'] = values
-
-    return m
-
-
-def calc_pair_metrics(H, team):
-    """
-    Given a graph and a team, calculates all pair-wise metrics for possible
-    team pairs. Returns a dictionary where keys are the pair metric names, and
-    values are the computed values from each pair.
-    """
-    m = {}
-
-    metrics = [getattr(pair, x) for x in pair.__all__]
-    for metric_name, metric_func in metrics:
-        logger.debug(f"Calculating pair metric {metric_name}")
-        m[f'pair_{metric_name}'] = metric_func(H, team)
-
-    return m
-
-
-def calc_team_metrics(H, team, release, base_qry):
-    """
-    Given a graph and a team, calculates all team-wise metrics Returns a
-    dictionary where keys are the team metric names, and values are the
-    computed metric values.
-    """
-    _H = contract.contract_edges(H, team)
-
-    m = {}
-    metrics = [getattr(ego, x) for x in ego.__all__]
-    for metric_name, metric_func in metrics:
-        logger.debug(f"Calculating team metric {metric_name}")
-        qry = base_qry.copy()
-        m[f'team_{metric_name}'] = metric_func(_H, 'contracted', release, qry)
-
-    m['team_size'] = len(team)
-
-    return m
 
 
 def build_team(mov, specs):
@@ -164,11 +91,11 @@ def process_movies(components, year):
         cursor = db.titles.find(qry, no_cursor_timeout=True)
         movies = list(cursor.sort([('_id', 1)]).batch_size(0))
 
-        components = prune_components(components, date)
+        components = network.prune_components(components, date)
         for mov in tqdm(movies):
             team = build_team(mov, EXP['team'])
             if team:
-                giant = update_components(components, team, mov['_id'], date)
+                giant = network.update_components(components, team, mov['_id'], date)
                 if giant:
                     movies_to_process.append((mov['_id'], team))
 
@@ -188,14 +115,12 @@ def process_movies(components, year):
         H = components[0]
 
         logger.debug(f"Calculating ego for {mov['primaryTitle']}.")
-        ego_metrics = calc_ego_metrics(H, team, year, EXP['filter'])
+        pair_agg = metrics.calc_ego(H, team, year, EXP['filter'])
         logger.debug(f"Calculating pair metrics for {mov['primaryTitle']}.")
-        pair_metrics = calc_pair_metrics(H, team)
+        pair_agg = metrics.calc_pair(H, team)
         logger.debug(f"Calculating team metrics for {mov['primaryTitle']}.")
-        team_metrics = calc_team_metrics(H, team, year, EXP['filter'])
+        team_metrics = metrics.calc_team(H, team, year, EXP['filter'])
         logger.debug(f"Aggregating metrics for {mov['primaryTitle']}.")
-        ego_agg = calculate_aggregations(ego_metrics)
-        pair_agg = calculate_aggregations(pair_metrics)
 
         exp = {'title': mov['primaryTitle'],
                'year': year,

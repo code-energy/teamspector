@@ -42,8 +42,8 @@ considered, except for:
 During pre-processing, movies' number of votes (`numVotes`) is converted into a
 logarithm `log_votes`, as it has an exponential distribution.
 
-Movie's average ratings are normalized using a Bayesian estimate into
-`nrating`, as there are wild differences in the sample sizes taken into account
+The average ratings of movies are normalized into `nrating` using a Bayesian
+estimate, as there are wild differences in the sample sizes taken into account
 to produce the average. We suppose the Bayesian estimate can be trusted only
 for movies that received five thousands of votes or more, hence `nrating` is
 only defined for movies with `numVotes` ≥ 5000.
@@ -86,11 +86,12 @@ directors. Pieces of work are movies, their success metrics are `ypct` and
 `top100`. The `build_network.py` uses the IMDb dataset to build the graph of
 workers. For each movie produced, network metrics from workers and success
 metrics from movies are stored in a separated table.
+<!--'in a separated table' or 'in separate tables'?-->
 
 ## Methodology
-The experiment runs in a loop, where each year is analysed at a time. IMDb only
-provides movies' year of release, forcing us to consider movies produced in a
-given year are all produced and released simultaneously.
+The experiment runs in a loop, where each year is analyzed at a time. IMDb only
+provides the year of release of movies, forcing us to consider movies produced
+in a given year are all produced and released simultaneously.
 
 We begin with an empty list of network graphs L.
 
@@ -108,7 +109,7 @@ single graph, which is added to L, and the original graphs which were joined
 are removed from L.
 
 ### Time Frame
-Experiments' metrics are only collected starting from 1985, as success metrics
+Experiment metrics are only collected starting from 1985, as success metrics
 might not be reliable prior to this year. The experiment runs from 1985 to
 2012. The reason 2012 was chosen instead of a more recent year is that we don't
 know how long it takes after a movie is released for `ypct` and `top100` to

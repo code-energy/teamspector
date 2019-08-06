@@ -1,12 +1,14 @@
+from tqdm import tqdm
 from pymongo import MongoClient
 
 db = MongoClient().imdbws
 
 db.titles.create_index('is_subject')
 
-i = 0
-for m in db.titles.find({'is_subject': {'$exists': False}}):
-        i += 1
+all_docs = db.titles.find({'is_subject': {'$exists': False}})
+total = all_docs.count()
+
+for m in tqdm(all_docs, total=total):
         is_subject = True
         if not m['startYear']:
             is_subject = False
@@ -17,6 +19,3 @@ for m in db.titles.find({'is_subject': {'$exists': False}}):
 
         db.titles.update_one({'_id': m['_id']},
                              {'$set': {'is_subject':  is_subject}})
-
-        if i % 1000 == 0:
-            print(f"{i} titles updated.")

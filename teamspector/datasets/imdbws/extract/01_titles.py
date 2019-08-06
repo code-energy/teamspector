@@ -3,20 +3,20 @@
 import os
 import csv
 
+from tqdm import tqdm
 from pymongo import MongoClient, ASCENDING
 
 db = MongoClient().imdbws
-
-root_path = os.path.dirname(os.path.realpath(__file__))
-path = root_path + "/../raw/title.basics.tsv"
-
-counter = 0
-
-
 db.titles.create_index([('startYear', ASCENDING), ('_id', ASCENDING)])
 
 
-for row in csv.DictReader(open(path), delimiter='\t', quoting=csv.QUOTE_NONE):
+root_path = os.path.dirname(os.path.realpath(__file__))
+path = root_path + "/../raw/title.basics.tsv"
+total = sum(1 for i in open(path, 'rb'))
+all_rows = csv.DictReader(open(path), delimiter='\t', quoting=csv.QUOTE_NONE)
+
+
+for row in tqdm(all_rows, total=total):
     t = {}
     for k, v in row.items():
         if v == '\\N':
@@ -37,9 +37,5 @@ for row in csv.DictReader(open(path), delimiter='\t', quoting=csv.QUOTE_NONE):
 
     if t['genres']:
         t['genres'] = t['genres'].split(',')
-
-    counter += 1
-    if counter % 10000 == 0:
-        print("{} titles inserted.".format(counter))
 
     db.titles.save(t)

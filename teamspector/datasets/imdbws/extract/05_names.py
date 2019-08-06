@@ -3,16 +3,17 @@
 import os
 import csv
 
+from tqdm import tqdm
 from pymongo import MongoClient
 
 db = MongoClient().imdbws
 
 root_path = os.path.dirname(os.path.realpath(__file__))
 path = root_path + "/../raw/name.basics.tsv"
+total = sum(1 for i in open(path, 'rb'))
+all_rows = csv.DictReader(open(path), delimiter='\t', quoting=csv.QUOTE_NONE)
 
-counter = 0
-
-for row in csv.DictReader(open(path), delimiter='\t', quoting=csv.QUOTE_NONE):
+for row in tqdm(all_rows, total=total):
     c = {}
     for k, v in row.items():
         if v == "\\N":
@@ -31,9 +32,5 @@ for row in csv.DictReader(open(path), delimiter='\t', quoting=csv.QUOTE_NONE):
 
     if c['knownForTitles']:
         c['knownForTitles'] = c['knownForTitles'].split(',')
-
-    counter += 1
-    if counter % 10000 == 0:
-        print("{} crew inserted.".format(counter))
 
     db.crew.save(c)

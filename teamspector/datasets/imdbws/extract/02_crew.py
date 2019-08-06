@@ -4,6 +4,7 @@
 import os
 import csv
 
+from tqdm import tqdm
 from pymongo import MongoClient
 
 db = MongoClient().imdbws
@@ -11,34 +12,18 @@ db = MongoClient().imdbws
 root_path = os.path.dirname(os.path.realpath(__file__))
 path = root_path + "/../raw/title.crew.tsv"
 
-counter = 0
+total = sum(1 for i in open(path, 'rb'))
+all_rows = csv.DictReader(open(path), delimiter='\t', quoting=csv.QUOTE_NONE)
 
-for row in csv.DictReader(open(path), delimiter='\t', quoting=csv.QUOTE_NONE):
+for row in tqdm(all_rows, total=total):
     if db.titles.find_one({'_id': row['tconst']}):
+        team = []
+        if row['directors'] != "\\N":
+            for d in row['directors'].split(','):
+                team.append({'ordering': None, 'id': d, 'jobs': ['director']})
 
-        if row['directors'] == "\\N":
-            row['directors'] = None
-        else:
-            row['directors'] = row['directors'].split(',')
+        if row['writers'] != "\\N":
+            for w in row['writers'].split(','):
+                team.append({'ordering': None, 'id': w, 'jobs': ['writer']})
 
-        if row['writers'] == "\\N":
-            row['writers'] = None
-        else:
-            row['writers'] = row['writers'].split(',')
-
-        db.titles.update_one({'_id': row['tconst']}, {'$set':
-                             {'directors': row['directors'],
-                              'writers': row['writers']}})
-
-        counter += 1
-        if counter % 10000 == 0:
-            print("{} titles updated.".format(counter))
-
-
-x = db.titles.update_many({'directors': {'$exists': False}},
-                          {'$set': {'directors': None}})
-print("Updated {} titles without directors.".format(x.modified_count))
-
-x = db.titles.update_many({'writers': {'$exists': False}},
-                          {'$set': {'writers': None}})
-print("Updated {} titles without writers.".format(x.modified_count))
+        db.titles.update_one({'_id': row['tconst']}, {'$set': {'team': team}})

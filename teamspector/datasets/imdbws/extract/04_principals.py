@@ -4,30 +4,34 @@
 import os
 import csv
 
+from tqdm import tqdm
 from pymongo import MongoClient
 
 db = MongoClient().imdbws
 
 root_path = os.path.dirname(os.path.realpath(__file__))
 path = root_path + '/../raw/title.principals.tsv'
+total = sum(1 for i in open(path, 'rb'))
+all_rows = csv.DictReader(open(path), delimiter='\t', quoting=csv.QUOTE_NONE)
 
-counter = 0
+for row in tqdm(all_rows, total=total):
+    t = db.titles.find_one({'_id': row['tconst']})
+    if t:
+        team = {p['id']: p for p in t['team']}
+        _id = row['nconst']
 
+        if _id not in team:
+            team[_id] = {'id': _id, 'ordering': None, 'jobs': []}
 
-for row in csv.DictReader(open(path), delimiter='\t', quoting=csv.QUOTE_NONE):
-    if db.titles.find_one({'_id': row['tconst']}):
-        principal = {'ordering': int(row['ordering']),
-                     'nconst': row['nconst'],
-                     'category': row['category'],
-                     'job': None if row['job'] == r'\N' else row['job']}
-        db.titles.update_one({'_id': row['tconst']}, {'$push':
-                             {'principals': principal}})
+        ordering = int(row['ordering'])
+        if not (team[_id]['ordering']) or (ordering > team[_id]['ordering']):
+            team[_id]['ordering'] = ordering
 
-        counter += 1
-        if counter % 10000 == 0:
-            print("{} titles updated.".format(counter))
+        if not row['category'] in team[_id]['jobs']:
+            team[_id]['jobs'].append(row['category'])
 
+        if row['job'] != r'\N' and row['job'] not in team[_id]['jobs']:
+            team[_id]['jobs'].append(row['job'])
 
-x = db.titles.update_many({'principals': {'$exists': False}},
-                          {'$set': {'principals': []}})
-print("Updated {} titles without principal cast.".format(x.modified_count))
+        team = list(team.values())
+        db.titles.update_one({'_id': row['tconst']}, {'$set': {'team': team}})

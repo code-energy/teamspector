@@ -27,26 +27,6 @@ db = MongoClient().imdbws
 EXP = experiments[sys.argv[1] if len(sys.argv) > 1 else 0]
 
 
-def build_team(mov, specs):
-    """
-    Given a movie record and a list of valid roles, return a list of unique ids
-    of team members that match any of the given roles.
-    """
-    team = set()
-    for spec in specs:
-        if(spec in ['writer', 'director'] and mov.get(spec + 's')):
-            for agent in mov[spec + 's']:
-                if agent not in team:
-                    team.add(agent)
-
-        matches = lambda p: p['job'] == spec or p['category'] == spec
-        for agent in filter(matches, mov['principals']):
-            if agent['nconst'] not in team:
-                team.add(agent['nconst'])
-
-    return tuple(team) if len(team) > 1 else None
-
-
 def load_components_cache(year):
     """
     Load a list of components at a given year, along with all movies that were
@@ -93,7 +73,7 @@ def process_movies(components, year):
 
         components = network.prune_components(components, date)
         for mov in tqdm(movies):
-            team = build_team(mov, EXP['team'])
+            team = network.filter_team(mov['team'], EXP['team'])
             if team:
                 giant = network.update_components(components, team, mov['_id'], date)
                 if giant:

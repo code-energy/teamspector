@@ -152,3 +152,13 @@ def contract_edges(G, nodes):
 
     G.remove_edges_from(list(edges) + list(nodes))
     return G
+
+
+def filter_team(team, specs):
+    """
+    Given a team list and a list of valid roles, return a list of unique ids
+    of team members that match any of the given roles.
+    """
+    team = filter(lambda t: set(specs).intersection(t['jobs']), team)
+    team = [t['id'] for t in team]
+    return team if len(team) > 1 else None

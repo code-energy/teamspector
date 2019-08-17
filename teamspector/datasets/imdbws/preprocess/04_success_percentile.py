@@ -7,15 +7,20 @@
 # Prior to 1985, less than 100 movies per year received over 5k votes. To keep
 # consistency, only movies from 1985 onwards are considered for the success
 # metrics.
+import logging
 
 import pandas as pd
 from tqdm import tqdm
 from pymongo import MongoClient
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__file__.split("/")[-1])
+logger.info("Calculating success percentile for each movie…")
+
 client = MongoClient()
 db = client.imdbws
 qry = {'is_subject': True, 'startYear': {'$gte': 1985}}
-df = pd.DataFrame(list(db.titles.find(qry)))
+df = pd.DataFrame(list(db.productions.find(qry)))
 
 g = df.groupby('startYear')
 
@@ -48,4 +53,4 @@ for _, r in tqdm(df.iterrows(), total=df.shape[0]):
             'ypct_rating': r['ypct_rating'], 'pct': r['pct'],
             'pct_votes': r['pct_votes'], 'pct_rating': r['pct_rating'],
             'top100': r['top100']}
-    db.titles.update({'_id': r['_id']}, {'$set': data})
+    db.productions.update({'_id': r['_id']}, {'$set': data})

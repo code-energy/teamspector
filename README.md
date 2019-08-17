@@ -10,12 +10,16 @@ collaborative data. Currently it includes:
 Teamspector needs MongoDB, and should be installed in its own virtual
 environment. For installation instructions, see `INSTALL.md`.  After installing
 Teamspector, download the IMDb data sources, extract the data to a local
-MongoDB collection, run the pre-processing rules, and start the experiment:
+MongoDB collection, run the pre-processing rules:
 
-    $ download-imdbws
-    $ extract-imdbws
-    $ preprocess-imdbws
-    $ experiment-imdbws
+    $ download imdbws
+    $ extract imdbws
+    $ preprocess imdbws
+
+There is a smaller experiment that runs faster, just to test things. It has the
+id `0`. The main experiment has id `1`. To run an experiment:
+
+    $ experiment imdbws <experiment id>
 
 # Dataset
 The IMDb dataset is provided by Amazon: <https://www.imdb.com/interfaces/>.

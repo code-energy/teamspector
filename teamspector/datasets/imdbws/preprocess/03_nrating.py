@@ -10,9 +10,14 @@
 #
 # The minimum number of votes for having an informative normalized rating was
 # arbitrarily set at 5,000.
+import logging
 
 from tqdm import tqdm
 from pymongo import MongoClient
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__file__.split("/")[-1])
+logger.info("Calculating normalized ratings for each movie…")
 
 client = MongoClient()
 
@@ -22,10 +27,8 @@ m = 25000
 M = 5000
 C = 7.0
 
-docs = db.titles.find({'nrating': {'$exists': False}, 'is_subject': True})
-total = docs.count()
-
-for mov in tqdm(docs, total=total):
+docs = db.productions.find({'nrating': {'$exists': False}, 'is_subject': True})
+for mov in tqdm(docs, total=docs.count()):
     v = mov['numVotes']
     if v and v >= M:
         R = float(mov['averageRating'].to_decimal())
@@ -33,4 +36,4 @@ for mov in tqdm(docs, total=total):
     else:
         wr = None
 
-    db.titles.update({'_id': mov['_id']}, {'$set': {'nrating': wr}})
+    db.productions.update({'_id': mov['_id']}, {'$set': {'nrating': wr}})

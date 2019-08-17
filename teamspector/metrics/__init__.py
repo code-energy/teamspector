@@ -16,9 +16,9 @@ def calculate_aggregations(data):
     for metric_name, metric in data.items():
         metric = list(filter(lambda x: x is not None, metric))
         aggs = [getattr(aggregations, x) for x in aggregations.__all__]
-        for agg_name, agg_func in aggs:
-            result = agg_func(metric) if metric else None
-            results['%s_%s' % (metric_name, agg_name)] = result
+        for agg in aggs:
+            result = agg(metric) if metric else None
+            results[f'{metric_name}_{agg.__name__}'] = result
     return results
 
 
@@ -31,12 +31,12 @@ def calc_ego(H, team, release, base_qry):
     m = {}
     metrics = [getattr(ego, x) for x in ego.__all__]
 
-    for metric_name, metric_func in metrics:
-        logger.debug(f"Calculating ego metric {metric_name}")
+    for metric in metrics:
+        logger.debug(f"Calculating ego metric {metric.__name__}")
         values = []
         for member in team:
-            values.append(metric_func(H, member, release, base_qry.copy()))
-        m[f'ego_{metric_name}'] = values
+            values.append(metric(H, member, release, base_qry.copy()))
+        m[f'ego_{metric.__name__}'] = values
 
     return calculate_aggregations(m)
 
@@ -50,9 +50,9 @@ def calc_pair(H, team):
     m = {}
 
     metrics = [getattr(pair, x) for x in pair.__all__]
-    for metric_name, metric_func in metrics:
-        logger.debug(f"Calculating pair metric {metric_name}")
-        m[f'pair_{metric_name}'] = metric_func(H, team)
+    for metric in metrics:
+        logger.debug(f"Calculating pair metric {metric.__name__}")
+        m[f'pair_{metric.__name__}'] = metric(H, team)
 
     return calculate_aggregations(m)
 
@@ -67,10 +67,10 @@ def calc_team(H, team, release, base_qry):
 
     m = {}
     metrics = [getattr(ego, x) for x in ego.__all__]
-    for metric_name, metric_func in metrics:
-        logger.debug(f"Calculating team metric {metric_name}")
+    for metric in metrics:
+        logger.debug(f"Calculating team metric {metric.__name__}")
         qry = base_qry.copy()
-        m[f'team_{metric_name}'] = metric_func(_H, 'contracted', release, qry)
+        m[f'team_{metric.__name__}'] = metric(_H, 'contracted', release, qry)
 
     m['team_size'] = len(team)
 

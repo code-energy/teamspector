@@ -44,10 +44,10 @@ def previous_rating(G, v, startYear, base_qry):
     if v == 'contracted':
         v = {'$in': G.node[v]['original']}
 
-    base_qry.update({'team': v, 'nrating': {'$ne': None},
+    base_qry.update({'team.id': v, 'nrating': {'$ne': None},
                      'startYear': {'$lt': startYear}})
 
-    movs = db.titles.find(base_qry)
+    movs = db.productions.find(base_qry)
     if movs.count():
         x.append(np.average([mov['nrating'] for mov in movs]))
 
@@ -64,10 +64,10 @@ def previous_votes(G, v, startYear, base_qry):
     if v == 'contracted':
         v = {'$in': G.node[v]['original']}
 
-    base_qry.update({'team': v, 'log_votes': {'$ne': None},
+    base_qry.update({'team.id': v, 'log_votes': {'$ne': None},
                      'startYear': {'$lt': startYear}})
 
-    movs = db.titles.find(base_qry)
+    movs = db.productions.find(base_qry)
     if movs.count():
         x.append(np.average([math.log(mov['log_votes']) for mov in movs]))
 
@@ -86,9 +86,9 @@ def previous_experience(G, v, startYear, base_qry):
     if v == 'contracted':
         v = {'$in': G.node[v]['original']}
 
-    base_qry.update({'team': v, 'startYear': {'$lt': startYear}})
+    base_qry.update({'team.id': v, 'startYear': {'$lt': startYear}})
 
-    return db.titles.find(base_qry).count()
+    return db.productions.find(base_qry).count()
 
 
 def network_constraint(G, v, startYear, base_qry):

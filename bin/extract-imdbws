@@ -1,4 +1,0 @@
-#!/bin/bash
-BASE_PATH=`python -c 'import teamspector; print(teamspector.__file__)'`
-SCRIPTS=$(dirname ${BASE_PATH})/datasets/imdbws/extract/*.py
-for s in ${SCRIPTS}; do python "$s"; done

@@ -38,4 +38,4 @@ for row in tqdm(all_rows, total=total):
     if c['knownForTitles']:
         c['knownForTitles'] = c['knownForTitles'].split(',')
 
-    db.participants.save(c)
+    db.participants.insert_one(c)

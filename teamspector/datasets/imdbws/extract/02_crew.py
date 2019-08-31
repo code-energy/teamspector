@@ -10,7 +10,7 @@ from pymongo import MongoClient
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__file__.split("/")[-1])
-logger.info("Adding directors and writers to movies' production teams…")
+logger.info("Adding directors and writers to movie production teams…")
 
 db = MongoClient().imdbws
 

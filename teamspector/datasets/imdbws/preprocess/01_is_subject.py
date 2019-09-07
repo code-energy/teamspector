@@ -12,7 +12,7 @@ db = MongoClient().imdbws
 db.productions.create_index('is_subject')
 
 all_docs = db.productions.find({'is_subject': {'$exists': False}})
-for m in tqdm(all_docs, total=all_docs.count()):
+for m in tqdm(all_docs, total=all_docs.count_documents():
     is_subject = True
     if not m['startYear']:
         is_subject = False

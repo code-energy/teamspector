@@ -12,9 +12,10 @@ from . import structural_holes
 db = MongoClient().imdbws
 
 
-__all__ = ['closeness', 'betweenness', 'previous_rating', 'previous_votes',
-           'clustering', 'square_clustering', 'previous_experience',
-           'network_constraint', 'degree']
+__all__ = ['closeness', 'betweenness', 'previous_rating', 'previous_ypct',
+           'previous_top100', 'previous_votes', 'clustering',
+           'square_clustering', 'previous_experience', 'network_constraint',
+           'degree']
 
 
 def closeness(G, v, startYear, base_qry):
@@ -52,6 +53,39 @@ def previous_rating(G, v, startYear, base_qry):
         x.append(np.average([mov['nrating'] for mov in movs]))
 
     return np.average(x) if x else None
+
+
+def previous_ypct(G, v, startYear, base_qry):
+    """
+    Calculate previous ypct from team members. Returns None if there are no
+    previous ypct.
+    """
+    x = []
+
+    if v == 'contracted':
+        v = {'$in': G.node[v]['original']}
+
+    base_qry.update({'team.id': v, 'ypct': {'$ne': None},
+                     'startYear': {'$lt': startYear}})
+
+    movs = db.productions.find(base_qry)
+    if movs.count():
+        x.append(np.average([mov['ypct'] for mov in movs]))
+
+    return np.average(x) if x else None
+
+
+def previous_top100(G, v, startYear, base_qry):
+    """
+    Gets the number of previous productions labeled top100 from team members.
+    """
+    if v == 'contracted':
+        v = {'$in': G.node[v]['original']}
+
+    base_qry.update({'team.id': v, 'top100': True,
+                     'startYear': {'$lt': startYear}})
+
+    return db.productions.find(base_qry).count()
 
 
 def previous_votes(G, v, startYear, base_qry):

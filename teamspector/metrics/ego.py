@@ -69,7 +69,7 @@ def previous_votes(G, v, startYear, base_qry):
 
     movs = db.productions.find(base_qry)
     if movs.count():
-        x.append(np.average([math.log(mov['log_votes']) for mov in movs]))
+        x.append(np.average([mov['log_votes'] for mov in movs]))
 
     return np.average(x) if x else None
 

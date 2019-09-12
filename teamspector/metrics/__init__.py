@@ -22,34 +22,35 @@ def calculate_aggregations(data):
     return results
 
 
-def calc_ego(H, team, release, base_qry):
+def calc_ego(H, team, release, experiment):
     """
     Given a graph and a team, calculates all ego metrics for each team member.
     Returns a dictionary where keys are ego metric names, and values are the
     computed values from each team member.
     """
     m = {}
-    metrics = [getattr(ego, x) for x in ego.__all__]
-
+    metrics = experiment.get('metrics', ego.__all__)
+    metrics = [getattr(ego, x) for x in metrics if x in ego.__all__]
     for metric in metrics:
         logger.debug(f"Calculating ego metric {metric.__name__}")
         values = []
         for member in team:
-            values.append(metric(H, member, release, base_qry.copy()))
+            qry = experiment['filter'].copy()
+            values.append(metric(H, member, release, qry))
         m[f'ego_{metric.__name__}'] = values
 
     return calculate_aggregations(m)
 
 
-def calc_pair(H, team):
+def calc_pair(H, team, experiment):
     """
     Given a graph and a team, calculates all pair-wise metrics for possible
     team pairs. Returns a dictionary where keys are the pair metric names, and
     values are the computed values from each pair.
     """
     m = {}
-
-    metrics = [getattr(pair, x) for x in pair.__all__]
+    metrics = experiment.get('metrics', pair.__all__)
+    metrics = [getattr(pair, x) for x in metrics if x in pair.__all__]
     for metric in metrics:
         logger.debug(f"Calculating pair metric {metric.__name__}")
         m[f'pair_{metric.__name__}'] = metric(H, team)
@@ -57,7 +58,7 @@ def calc_pair(H, team):
     return calculate_aggregations(m)
 
 
-def calc_team(H, team, release, base_qry):
+def calc_team(H, team, release, experiment):
     """
     Given a graph and a team, calculates all team-wise metrics Returns a
     dictionary where keys are the team metric names, and values are the
@@ -66,12 +67,14 @@ def calc_team(H, team, release, base_qry):
     _H = network.contract_edges(H, team)
 
     m = {}
-    metrics = [getattr(ego, x) for x in ego.__all__]
+    metrics = experiment.get('metrics', ego.__all__)
+    metrics = [getattr(ego, x) for x in metrics if x in ego.__all__]
     for metric in metrics:
+        qry = experiment['filter'].copy()
         logger.debug(f"Calculating team metric {metric.__name__}")
-        qry = base_qry.copy()
         m[f'team_{metric.__name__}'] = metric(_H, 'contracted', release, qry)
 
-    m['team_size'] = len(team)
+    if experiment.get('metrics') and 'team_size' in experiment['metrics']:
+        m['team_size'] = len(team)
 
     return m

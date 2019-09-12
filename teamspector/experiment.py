@@ -71,6 +71,15 @@ def _components_update(exp, components, year):
         logger.info(f"Huge component has {huge_comp} nodes ({x:.2f}%).")
 
 
+def _processed(work, experiment):
+    if not work:
+        return False
+    for metric in experiment.get('metrics', []):
+        if not any([metric in k for k in work.keys()]):
+            return False
+    return True
+
+
 def _process_productions(experiment):
     """
     Calculate experiment metrics for all works encompassed by an experiment.
@@ -86,16 +95,16 @@ def _process_productions(experiment):
         logger.info(f"Processing works from {year}.")
         components, works = _components_update(experiment, components, year)
         for work_id, team in tqdm(works):
-            if(target.find_one({'_id': work_id})):
+            if(_processed(target.find_one({'_id': work_id}), experiment)):
                 continue
             prd = db.productions.find_one({'_id': work_id})
             H = components[0]
             logger.debug(f"Calculate ego for {prd['primaryTitle']}.")
-            m_ego = metrics.calc_ego(H, team, year, experiment['filter'])
+            m_ego = metrics.calc_ego(H, team, year, experiment)
             logger.debug(f"Calculate pair metrics for {prd['primaryTitle']}.")
-            m_pair = metrics.calc_pair(H, team)
+            m_pair = metrics.calc_pair(H, team, experiment)
             logger.debug(f"Calculate team metrics for {prd['primaryTitle']}.")
-            m_team = metrics.calc_team(H, team, year, experiment['filter'])
+            m_team = metrics.calc_team(H, team, year, experiment)
             logger.debug(f"Aggregate metrics for {prd['primaryTitle']}.")
 
             data = {'title': prd['primaryTitle'],

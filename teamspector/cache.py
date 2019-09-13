@@ -2,7 +2,7 @@ import os
 import pickle
 import logging
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
 logger = logging.getLogger(__file__.split("/")[-1])
 
 

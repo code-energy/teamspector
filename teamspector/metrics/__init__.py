@@ -1,8 +1,9 @@
+import os
 import logging
 from .. import network
 from . import aggregations, ego, pair
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
 logger = logging.getLogger(__file__.split("/")[-1])
 
 
@@ -68,6 +69,12 @@ def calc_team(H, team, release, experiment):
 
     m = {}
     metrics = experiment.get('metrics', ego.__all__)
+
+    # Betweeness is too expensive to calculate and it can't be cached when
+    # doing node contraction.
+    if 'betweenness' in metrics:
+        metrics.remove('betweenness')
+
     metrics = [getattr(ego, x) for x in metrics if x in ego.__all__]
     for metric in metrics:
         qry = experiment['filter'].copy()

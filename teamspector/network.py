@@ -2,6 +2,7 @@
 # of a bipartite graph into a one-mode-graph, keeping the degree information
 # from the original (bipartite) network in the projected graphs.
 
+import os
 import logging
 from datetime import timedelta
 from itertools import combinations
@@ -10,7 +11,7 @@ from functools import reduce
 import networkx as nx
 
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
 logger = logging.getLogger(__file__.split("/")[-1])
 
 

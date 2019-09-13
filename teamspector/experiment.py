@@ -1,3 +1,4 @@
+import os
 import sys
 import logging
 from datetime import datetime
@@ -7,9 +8,8 @@ from pymongo import MongoClient
 
 from teamspector import network, metrics, cache, datasets
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
 logger = logging.getLogger(__file__.split("/")[-1])
-
 
 get_db = lambda exp: getattr(MongoClient(), exp['dataset'])
 

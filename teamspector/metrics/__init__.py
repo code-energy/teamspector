@@ -68,7 +68,7 @@ def calc_team(H, team, release, experiment):
     _H = network.contract_edges(H, team)
 
     m = {}
-    metrics = experiment.get('metrics', ego.__all__)
+    metrics = experiment.get('metrics', ego.__all__).copy()
 
     # Betweeness is too expensive to calculate and it can't be cached when
     # doing node contraction.

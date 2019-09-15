@@ -17,9 +17,16 @@ __all__ = ['closeness', 'betweenness', 'previous_rating', 'previous_ypct',
            'square_clustering', 'previous_experience', 'network_constraint',
            'degree']
 
+_cache_closeness = {}
+
 
 def closeness(G, v, startYear, base_qry):
-    return nx.closeness_centrality(G, u=v)
+    if not (v, startYear) in _cache_closeness:
+        closeness = nx.closeness_centrality(G, u=v)
+        _cache_closeness[(v, startYear)] = closeness
+        return closeness
+
+    return _cache_closeness[(v, startYear)]
 
 
 @functools.lru_cache(maxsize=2)

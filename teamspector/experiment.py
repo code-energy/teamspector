@@ -98,15 +98,7 @@ def _process_productions(experiment):
             if(_processed(target.find_one({'_id': work_id}), experiment)):
                 continue
             prd = db.productions.find_one({'_id': work_id})
-            H = components[0]
-            logger.debug(f"Calculate ego for {prd['primaryTitle']}.")
-            m_ego = metrics.calc_ego(H, team, year, experiment)
-            logger.debug(f"Calculate pair metrics for {prd['primaryTitle']}.")
-            m_pair = metrics.calc_pair(H, team, experiment)
-            logger.debug(f"Calculate team metrics for {prd['primaryTitle']}.")
-            m_team = metrics.calc_team(H, team, year, experiment)
-            logger.debug(f"Aggregate metrics for {prd['primaryTitle']}.")
-
+            logger.debug(f"Calculating metrics for {prd['primaryTitle']}…")
             data = {'title': prd['primaryTitle'],
                     'year': year,
                     'ypct': prd['ypct'],
@@ -114,9 +106,21 @@ def _process_productions(experiment):
                     'ypct_rating': prd['ypct'],
                     'top100': prd['top100']}
 
-            data.update(m_team)
+            H = components[0]
+            logger.debug(f"Ego metrics…")
+            m_ego = metrics.calc_ego(H, team, year, experiment)
             data.update(m_ego)
+            if 'ego_betweenness_maximum' not in data:
+                import pdb; pdb.set_trace()
+
+            logger.debug(f"Pair metrics…")
+            m_pair = metrics.calc_pair(H, team, experiment)
             data.update(m_pair)
+
+            logger.debug(f"Team metrics…")
+            m_team = metrics.calc_team(H, team, year, experiment)
+            data.update(m_team)
+
             target.update_one({'_id': prd['_id']}, {'$set': data}, upsert=True)
         year += 1
 

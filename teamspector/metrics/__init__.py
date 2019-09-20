@@ -65,8 +65,7 @@ def calc_team(H, team, release, experiment):
     dictionary where keys are the team metric names, and values are the
     computed metric values.
     """
-    _H = network.contract_edges(H, team)
-
+    _H = None
     m = {}
     metrics = experiment.get('metrics', ego.__all__).copy()
 
@@ -77,11 +76,13 @@ def calc_team(H, team, release, experiment):
 
     metrics = [getattr(ego, x) for x in metrics if x in ego.__all__]
     for metric in metrics:
+        if not _H:
+            _H = network.contract_edges(H, team)
         qry = experiment['filter'].copy()
         logger.debug(f"Calculating team metric {metric.__name__}")
         m[f'team_{metric.__name__}'] = metric(_H, 'contracted', release, qry)
 
-    if experiment.get('metrics') and 'team_size' in experiment['metrics']:
+    if ('metrics' not in experiment) or ('team_size' in experiment['metrics']):
         m['team_size'] = len(team)
 
     return m

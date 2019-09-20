@@ -95,23 +95,24 @@ def _process_productions(experiment):
         logger.info(f"Processing works from {year}.")
         components, works = _components_update(experiment, components, year)
         for work_id, team in tqdm(works):
-            if(_processed(target.find_one({'_id': work_id}), experiment)):
+            previous_calc = target.find_one({'_id': work_id})
+            if _processed(previous_calc, experiment):
                 continue
             prd = db.productions.find_one({'_id': work_id})
             logger.debug(f"Calculating metrics for {prd['primaryTitle']}…")
-            data = {'title': prd['primaryTitle'],
-                    'year': year,
-                    'ypct': prd['ypct'],
-                    'ypct_votes': prd['ypct'],
-                    'ypct_rating': prd['ypct'],
-                    'top100': prd['top100']}
+            data = {}
+            if not previous_calc:
+                data.update({'title': prd['primaryTitle'],
+                             'year': year,
+                             'ypct': prd['ypct'],
+                             'ypct_votes': prd['ypct'],
+                             'ypct_rating': prd['ypct'],
+                             'top100': prd['top100']})
 
             H = components[0]
             logger.debug(f"Ego metrics…")
             m_ego = metrics.calc_ego(H, team, year, experiment)
             data.update(m_ego)
-            if 'ego_betweenness_maximum' not in data:
-                import pdb; pdb.set_trace()
 
             logger.debug(f"Pair metrics…")
             m_pair = metrics.calc_pair(H, team, experiment)

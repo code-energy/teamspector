@@ -24,6 +24,7 @@ setup(
     entry_points={
         "console_scripts": [
             "experiment = teamspector.experiment:main",
+            "forecast = teamspector.forecast:main",
         ]
     },
     packages=find_packages()

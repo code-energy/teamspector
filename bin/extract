@@ -1,0 +1,10 @@
+#!/bin/bash
+if [ "$1" = "" ]
+then
+  echo "Usage: $0 <dataset code to extract>"
+  exit
+fi
+
+BASE_PATH=`python -c 'import teamspector; print(teamspector.__file__)'`
+SCRIPTS=$(dirname ${BASE_PATH})/datasets/$1/extract/*.py
+for s in ${SCRIPTS}; do python "$s"; done

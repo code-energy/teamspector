@@ -2,9 +2,8 @@
 
 import numpy as np
 
-# XXX: Do not import any functions to this name space without a leading `_`
-# character, or else the experiment runner will try to import and run the
-# function to aggregate data.
+
+__all__ = ['maximum', 'minimum', 'median', 'mean', 'std_dev']
 
 
 def maximum(data):

@@ -1,0 +1,18 @@
+#!/bin/bash
+if [ "$1" = "" ]
+then
+  echo "Usage: $0 <dataset code to download>"
+  exit
+fi
+
+BASE_PATH=`python -c 'import teamspector; print(teamspector.__file__)'`
+BASE_PATH=$(dirname ${BASE_PATH})
+DESTINATION_PATH=${BASE_PATH}/datasets/$1/raw
+SOURCE_FILES=${DESTINATION_PATH}/files.txt
+
+wget -c -v -P ${DESTINATION_PATH} -i ${SOURCE_FILES}
+
+if ls ${DESTINATION_PATH}/*.gz &>/dev/null
+then
+    gunzip -v --keep ${DESTINATION_PATH}/*.gz
+fi

@@ -1,12 +1,18 @@
-# This appends teams from a bipartite graph into a one-mode-graph, keeping the
-# degree information from the original (bipartite) network in the projected
-# graphs.
+# Important network operations, including node contraction, the transformation
+# of a bipartite graph into a one-mode-graph, keeping the degree information
+# from the original (bipartite) network in the projected graphs.
 
+import os
+import logging
 from datetime import timedelta
 from itertools import combinations
 from functools import reduce
 
 import networkx as nx
+
+
+logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
+logger = logging.getLogger(__file__.split("/")[-1])
 
 
 def sorted_append(components, to_insert):
@@ -122,3 +128,38 @@ def prune_components(components, date):
                 components += novos  # split_non_connected_component(component)
 
     return sorted(components, key=lambda x: -len(x))
+
+
+def contract_edges(G, nodes):
+    """
+    Contracts edges of nodes in the graph. Returns the result in a new graph.
+    """
+    logger.debug(f"Contracting nodes.")
+
+    G = G.copy()
+    G.add_node('contracted')
+    G.node['contracted']['original'] = nodes
+
+    movies = set()
+    [movies.update(G.node[n]['movies']) for n in nodes]
+    G.node['contracted']['movies'] = list(movies)
+
+    edges = G.edges(nodes, data=True)
+    for e in [e for e in edges if not (e[0] in nodes and e[1] in nodes)]:
+        oute = e[0] if e[1] in nodes else e[1]
+        if not G.has_edge('contracted', oute):
+            G.add_edge('contracted', oute, weight=0)
+        G['contracted'][oute]['weight'] += e[2]['weight']
+
+    G.remove_edges_from(list(edges) + list(nodes))
+    return G
+
+
+def filter_team(team, specs):
+    """
+    Given a team list and a list of valid roles, return a list of unique ids
+    of team members that match any of the given roles.
+    """
+    team = filter(lambda t: set(specs).intersection(t['jobs']), team)
+    team = [t['id'] for t in team]
+    return team if len(team) > 1 else None

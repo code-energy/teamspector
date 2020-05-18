@@ -8,3 +8,5 @@
 *.pdf
 .cache*
 .ipynb*
+/dist/
+/*.egg-info

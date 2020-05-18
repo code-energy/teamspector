@@ -2,21 +2,25 @@
 
 import os
 import csv
+import logging
 
+from tqdm import tqdm
 from pymongo import MongoClient, ASCENDING
 
 db = MongoClient().imdbws
+db.productions.create_index([('startYear', ASCENDING), ('_id', ASCENDING)])
+
 
 root_path = os.path.dirname(os.path.realpath(__file__))
-path = root_path + "/datasets.imdbws.com/title.basics.tsv"
+path = root_path + "/../raw/title.basics.tsv"
+total = sum(1 for i in open(path, 'rb'))
+all_rows = csv.DictReader(open(path), delimiter='\t', quoting=csv.QUOTE_NONE)
 
-counter = 0
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__file__.split("/")[-1])
+logger.info("Extracting movies from CSV to a MongoDB collection…")
 
-
-db.titles.create_index([('startYear', ASCENDING), ('_id', ASCENDING)])
-
-
-for row in csv.DictReader(open(path), delimiter='\t', quoting=csv.QUOTE_NONE):
+for row in tqdm(all_rows, total=total):
     t = {}
     for k, v in row.items():
         if v == '\\N':
@@ -38,8 +42,4 @@ for row in csv.DictReader(open(path), delimiter='\t', quoting=csv.QUOTE_NONE):
     if t['genres']:
         t['genres'] = t['genres'].split(',')
 
-    counter += 1
-    if counter % 10000 == 0:
-        print("{} titles inserted.".format(counter))
-
-    db.titles.save(t)
+    db.productions.save(t)

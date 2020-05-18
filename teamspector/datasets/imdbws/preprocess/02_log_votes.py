@@ -13,6 +13,6 @@ logger.info("Adding logarithm of number of votes for each movie…")
 db = MongoClient().imdbws
 q = {'log_votes': {'$exists': False}, 'is_subject': True}
 docs = db.productions.find(q)
-for m in tqdm(docs, total=docs.count()):
+for m in tqdm(docs, total=docs.count_documents()):
     v = math.log(m['numVotes'] or 4)
     db.productions.update_one({'_id': m['_id']}, {'$set': {'log_votes': v}})

@@ -9,7 +9,7 @@ from pymongo import MongoClient
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__file__.split("/")[-1])
-logger.info("Extracting movie participants' from CSV to a MongoDB collection…")
+logger.info("Extracting movie participants from CSV to a MongoDB collection…")
 
 db = MongoClient().imdbws
 
@@ -38,4 +38,4 @@ for row in tqdm(all_rows, total=total):
     if c['knownForTitles']:
         c['knownForTitles'] = c['knownForTitles'].split(',')
 
-    db.participants.save(c)
+    db.participants.insert_one(c)

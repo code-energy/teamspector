@@ -53,4 +53,4 @@ for _, r in tqdm(df.iterrows(), total=df.shape[0]):
             'ypct_rating': r['ypct_rating'], 'pct': r['pct'],
             'pct_votes': r['pct_votes'], 'pct_rating': r['pct_rating'],
             'top100': r['top100']}
-    db.productions.update({'_id': r['_id']}, {'$set': data})
+    db.productions.update_one({'_id': r['_id']}, {'$set': data})

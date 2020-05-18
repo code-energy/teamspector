@@ -28,7 +28,7 @@ M = 5000
 C = 7.0
 
 docs = db.productions.find({'nrating': {'$exists': False}, 'is_subject': True})
-for mov in tqdm(docs, total=docs.count()):
+for mov in tqdm(docs, total=docs.count_documents()):
     v = mov['numVotes']
     if v and v >= M:
         R = float(mov['averageRating'].to_decimal())
@@ -36,4 +36,4 @@ for mov in tqdm(docs, total=docs.count()):
     else:
         wr = None
 
-    db.productions.update({'_id': mov['_id']}, {'$set': {'nrating': wr}})
+    db.productions.update_one({'_id': mov['_id']}, {'$set': {'nrating': wr}})

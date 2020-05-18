@@ -42,4 +42,4 @@ for row in tqdm(all_rows, total=total):
     if t['genres']:
         t['genres'] = t['genres'].split(',')
 
-    db.productions.save(t)
+    db.productions.insert_one(t)
